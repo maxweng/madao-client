@@ -1,0 +1,18 @@
+{
+  "name": "madaoClient",
+  "private": true,
+  "devDependencies": {},
+  "dependencies": {
+    "ionic": "#1.x",
+    "angular": "^1.5.5"
+  },
+  "overrides": {
+    "ionic": {
+      "main": [
+        "release/fonts/*",
+        "release/js/ionic.js",
+        "release/js/ionic-angular.js"
+      ]
+    }
+  }
+}

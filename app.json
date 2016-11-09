@@ -1,0 +1,10 @@
+{
+    "dev": {
+        "host": "/api",
+        "staticHost": ""
+    },
+    "web": {
+        "host": "",
+        "staticHost": ""
+    }
+}
