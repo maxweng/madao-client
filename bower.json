@@ -4,7 +4,8 @@
   "devDependencies": {},
   "dependencies": {
     "ionic": "#1.x",
-    "angular": "^1.5.5"
+    "angular": "^1.5.5",
+    "bignumber.js": "^3.0.0"
   },
   "overrides": {
     "ionic": {
