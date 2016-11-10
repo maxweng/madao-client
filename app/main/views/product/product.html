@@ -1,0 +1,83 @@
+<ion-view>
+    <ion-nav-title>航空意外互助计划</ion-nav-title>
+    <ion-content class="product background-gray has-footer">
+        <img width="100%" ng-src="{{ 'images/banner.png' | staticSrc }}">
+        <div class="background-white padding">
+            <div class="border-bottom">
+                <div class="title">航空意外最高可获100万元保障</div>
+                <div class="padding-left-20">
+                    <ul class="text">
+                        <li>亚洲欧洲澳洲美洲非洲中东通保</li>
+                        <li>保障年龄0-90周岁，突发意外全面保障</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row columns border-bottom">
+                <div class="col-50 border-right column">
+                    <img ng-src="{{ 'images/wallet.png' | staticSrc }}"></img>
+                    <div class="box">
+                        <div class="title">累计总金额</div>
+                        <div class="text">316.2万</div>
+                    </div>
+                </div>
+                <div class="col-50 column">
+                    <img ng-src="{{ 'images/people.png' | staticSrc }}"></img>
+                    <div class="box">
+                        <div class="title">累计参与人数</div>
+                        <div class="text">371.4万</div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center font-large" style="margin: 20px 0px 10px;">
+                会费 <span class="energized"> 200 </span> 元
+            </div>
+        </div>
+        <div class="background-white margin-top-20" style="padding:0 10px;">
+            <ion-list>
+               <div class="border-bottom">
+                 <ion-item ng-click="views.assistance=!views.assistance">
+                   <span class="font-medium">互助流程</span>
+                   <i class="icon pull-right" ng-class="views.assistance ? 'ion-ios-arrow-up' : 'ion-ios-arrow-down'"></i>
+                 </ion-item>
+                 <ion-item class="item-accordion ng-hide" ng-show="views.assistance">
+                     <div class="title">
+                         第一步：在线报案
+                     </div>
+                     <div class="text text-color-light padding-bottom">
+                         上传发起互助的会员所在国家的国家级新闻报道的电子文档、图片、照片等，且需含有成员名单。
+                     </div>
+                     <div class="title">
+                         第二步：审核材料
+                     </div>
+                     <div class="text text-color-light padding-bottom">
+                         上传手工输入的约定互助事项的承运航空公司、航班号、机型、航班的始发地、航班的目的地、航班起飞日期、成员数量、机组人员数量。
+                     </div>
+                     <div class="title">
+                         第三步：互助完成
+                     </div>
+                     <div class="text text-color-light padding-bottom">
+                         系统在进入互助实施阶段后的72小时后进行互助金的扣款。
+                     </div>
+                 </ion-item>
+               </div>
+             </ion-list>
+             <ion-list>
+                <div>
+                  <ion-item ng-click="views.problem=!views.problem">
+                    <span class="font-medium">常见问题</span>
+                    <i class="icon pull-right" ng-class="views.problem ? 'ion-ios-arrow-up' : 'ion-ios-arrow-down'"></i>
+                  </ion-item>
+                  <ion-item class="item-accordion ng-hide" ng-show="views.problem">
+
+                  </ion-item>
+                </div>
+             </ion-list>
+        </div>
+    </ion-content>
+    <ion-footer-bar class="mbs-footer">
+        <div class="text-color-stable">同意 <span class="positive" ui-sref="app.provision"> 《 保障条款 》 </span></div>
+        <button class="button button-positive button-block" ui-sref="app.productDetail({'id':1})">
+            立即加入
+        </button>
+    </ion-footer-bar>
+</ion-view>

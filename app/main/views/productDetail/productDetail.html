@@ -1,0 +1,53 @@
+<ion-view>
+    <ion-nav-title>产品详情</ion-nav-title>
+    <ion-nav-buttons side="left">
+        <nav-back-button></nav-back-button>
+    </ion-nav-buttons>
+    <ion-content class="productDetail background-gray has-footer">
+        <div class="item item-avatar margin-bottom-20" style="border-top:none;border-left:none;border-right:none;">
+           <img ng-src="{{ 'images/banner.png' | staticSrc }}">
+           <div class="title">航空意外互助计划</div>
+           <div class="text">保障年龄0-90周岁 ｜ 突发意外全面保障</div>
+        </div>
+        <div class="background-white" style="padding:0 10px;">
+            <label class="item item-input">
+                <span class="input-label">参加人姓名</span>
+                <input type="text" class="text-right" placeholder="请输入">
+            </label>
+            <label class="item item-input" style="border-bottom:none;">
+                <span class="input-label">参加人性别</span>
+                <input type="text" class="text-right background-white" ng-model="views.gender" readonly>
+            </label>
+            <div class="item item-input">
+                <button class="button button-small" ng-class="{'button-positive':views.gender=='男','button-positive-outline':views.gender=='女'}" style="width:60px;" ng-click="changeGender('男')">
+                    男性
+                </button>
+                <button class="button button-small margin-left-20" ng-class="{'button-positive-outline':views.gender=='男','button-positive':views.gender=='女'}" style="width:60px;" ng-click="changeGender('女')">
+                    女性
+                </button>
+            </div>
+            <label class="item item-input">
+                <span class="input-label">参加人国籍</span>
+                <input type="text" class="text-right" placeholder="请输入">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">起飞时间</span>
+                <input type="text" class="text-right" placeholder="请输入">
+            </label>
+            <label class="item item-input" style="border-bottom:none;">
+                <span class="input-label">航班号</span>
+                <input type="text" class="text-right" placeholder="请输入">
+            </label>
+        </div>
+        <div class="text-color-stable mbs-checkbox">
+            <ion-checkbox ng-model="views.provision">本人已充分了解本互助计划，并承诺填写信息的真实性，理解并同意
+            <span class="positive" ui-sref="app.provision">《 保障计划 》</span>的全部内容</ion-checkbox>
+        </div>
+    </ion-content>
+    <ion-footer-bar class="font-medium product-detail-footer">
+        <div class="padding">会费 <span class="energized"> 200 </span> 元</div>
+        <button class="button button-positive pull-right font-medium">
+            我要加入
+        </button>
+    </ion-footer-bar>
+</ion-view>

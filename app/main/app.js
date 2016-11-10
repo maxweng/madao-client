@@ -27,6 +27,32 @@ function ($stateProvider, $urlRouterProvider, $httpProvider) {
                 }
             }
         })
+        .state('app.provision', {
+            url: '/provision',
+            views: {
+                menuContent: {
+                    templateUrl: 'templates/provision.html'
+                }
+            }
+        })
+        .state('app.product', {
+            url: '/product',
+            views: {
+                menuContent: {
+                    templateUrl: 'templates/product.html',
+                    controller: 'productCtrl'
+                }
+            }
+        })
+        .state('app.productDetail', {
+            url: '/product/:id',
+            views: {
+                menuContent: {
+                    templateUrl: 'templates/productDetail.html',
+                    controller: 'productDetailCtrl'
+                }
+            }
+        })
         ;
-    $urlRouterProvider.otherwise('/app/start');
+    $urlRouterProvider.otherwise('/app/product');
 }]);
