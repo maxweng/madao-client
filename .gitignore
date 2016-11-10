@@ -8,3 +8,4 @@
 !.gitkeep
 .DS_Store
 /app/styles/app.css
+/app/libs/*
