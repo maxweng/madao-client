@@ -13,6 +13,7 @@ var sass = require('gulp-sass');
 var replace = require('gulp-replace');
 var argv = require('yargs').argv;
 var config = require('./app.json');
+var browserify = require('gulp-browserify');
 
 var app = argv.app || 'dev';
 var clientBase = 'app';
@@ -138,6 +139,7 @@ gulp.task('concatJs', ['clean'], function(){
     jsFiles = jsFiles.concat(paths.js);
     return gulp.src(jsFiles)
         .pipe(concat('app.js'))
+        .pipe(browserify())
         .pipe(gulp.dest(output.js));
 });
 
