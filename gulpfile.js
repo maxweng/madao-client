@@ -13,11 +13,14 @@ var sass = require('gulp-sass');
 var replace = require('gulp-replace');
 var argv = require('yargs').argv;
 var config = require('./app.json');
-var browserify = require('gulp-browserify');
+var browserify = require('browserify');
+var babelify = require('babelify');
+var es = require('event-stream');
+var buffer = require('vinyl-buffer');
+var source = require('vinyl-source-stream');
 
 var app = argv.app || 'dev';
 var clientBase = 'app';
-
 var paths = {
     index: [
         'app/index.html'
@@ -25,8 +28,10 @@ var paths = {
     images: [
         'app/images/**/*'
     ],
+    mainJs: [
+        './app/main/app.js'
+    ],
     js: [
-        'app/main/app.js',
         'app/main/constants/**/*.js',
         'app/main/directives/**/*.js',
         'app/main/filters/*.js',
@@ -82,7 +87,7 @@ gulp.task('sass', function(done) {
         .pipe(gulp.dest('app/styles'));
 });
 
-gulp.task('javascript', function(){
+var javascript = function(){
     var files = mainBowerFiles().concat();
     var jsFiles = [];
     for(var i = 0; i < files.length; i++){
@@ -91,60 +96,28 @@ gulp.task('javascript', function(){
         }
     }
     jsFiles = jsFiles.concat(paths.js);
-    gulp.src(jsFiles)
-        .pipe(concat('app.js'))
-        .pipe(browserify())
-        .pipe(gulp.dest(output.js));
-});
-
-gulp.task('stylesheet', function(){
-    var files = mainBowerFiles().concat();
-    var cssFiles = [];
-    for(var i = 0; i < files.length; i++){
-        if(path.extname(files[i]).indexOf('css') >= 0){
-            cssFiles.push(path.relative('', files[i]));
-        }
-    }
-
-    cssFiles = cssFiles.concat(paths.css);
-
-    gulp.src(cssFiles, {base: clientBase})
-        .pipe(concat('app.css'))
-        .pipe(cleanCSS({
-            rebase: true,
-            relativeTo: clientBase,
-            target: clientBase
+    var bundle = browserify(paths.mainJs)
+        .transform(babelify.configure({
+            presets: ['es2015']
         }))
-        .pipe(gulp.dest(output.css));
-});
-
-gulp.task('templates', function(){
-    return gulp.src(paths.templates)
-        .pipe(rename({dirname: ''}))
-        .pipe(gulp.dest(output.template));
-});
-
-gulp.task('clean', function() {
-    return gulp.src('www/*', { read: false })
-        .pipe(clean());
-});
-
-gulp.task('concatJs', ['clean'], function(){
-    var files = mainBowerFiles().concat();
-    var jsFiles = [];
-    for(var i = 0; i < files.length; i++){
-        if(path.extname(files[i]).indexOf('js') >= 0){
-            jsFiles.push(path.relative('', files[i]));
-        }
-    }
-    jsFiles = jsFiles.concat(paths.js);
-    return gulp.src(jsFiles)
+        .bundle()
+        .pipe(source('app.js'))
+        .pipe(buffer());
+    return es.merge(bundle, gulp.src(jsFiles)) 
         .pipe(concat('app.js'))
-        .pipe(browserify())
         .pipe(gulp.dest(output.js));
+};
+
+// gulp.task('test', ['clean'], function(){
+//    return  utput.js));
+
+// })
+
+gulp.task('javascript', function(){
+    return javascript();
 });
 
-gulp.task('concatCss', ['clean', 'sass'], function(){
+var stylesheet = function(){
     var files = mainBowerFiles().concat();
     var cssFiles = [];
     for(var i = 0; i < files.length; i++){
@@ -163,6 +136,29 @@ gulp.task('concatCss', ['clean', 'sass'], function(){
             target: 'app'
         }))
         .pipe(gulp.dest(output.css));
+};
+
+gulp.task('stylesheet', function(){
+    return stylesheet();
+});
+
+gulp.task('templates', function(){
+    return gulp.src(paths.templates)
+        .pipe(rename({dirname: ''}))
+        .pipe(gulp.dest(output.template));
+});
+
+gulp.task('clean', function() {
+    return gulp.src('www/*', { read: false })
+        .pipe(clean());
+});
+
+gulp.task('concatJs', ['clean'], function(){
+    return javascript();
+});
+
+gulp.task('concatCss', ['clean', 'sass'], function(){
+    return stylesheet();
 });
 
 gulp.task('copyTemplate', ['clean'], function(){
@@ -194,8 +190,14 @@ gulp.task('minJs', ['concatJs'], function(){
     return gulp.src(output.js + '/*.js', {base: output.js})
         .pipe(clean())
         .pipe(hash(hashOptions))
-        .pipe(browserify())
-        .pipe(uglify())
+        // .pipe(uglify({
+        //     mangle: false
+        // }))
+        // .on('error', function(message, filename, line){
+        //     console.error(message);
+        //     console.error(filename);
+        //     console.error(line);
+        // })
         .pipe(gulp.dest(output.js));
 });
 
