@@ -232,8 +232,8 @@ ionicApp
             };
         } else {
             return {
-                ciphertext: ciphertext;
-            }
+                ciphertext: ciphertext
+            };
         }
     };
 

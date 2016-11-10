@@ -93,6 +93,7 @@ gulp.task('javascript', function(){
     jsFiles = jsFiles.concat(paths.js);
     gulp.src(jsFiles)
         .pipe(concat('app.js'))
+        .pipe(browserify())
         .pipe(gulp.dest(output.js));
 });
 
@@ -193,6 +194,7 @@ gulp.task('minJs', ['concatJs'], function(){
     return gulp.src(output.js + '/*.js', {base: output.js})
         .pipe(clean())
         .pipe(hash(hashOptions))
+        .pipe(browserify())
         .pipe(uglify())
         .pipe(gulp.dest(output.js));
 });
