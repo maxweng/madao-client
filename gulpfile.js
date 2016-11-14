@@ -15,9 +15,9 @@ var argv = require('yargs').argv;
 var config = require('./app.json');
 var browserify = require('browserify');
 var babelify = require('babelify');
-var es = require('event-stream');
 var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
+var streamqueue = require('streamqueue');
 
 var app = argv.app || 'dev';
 var clientBase = 'app';
@@ -76,6 +76,7 @@ gulp.task('watch', function(){
     gulp.watch(paths.sass, ['sass']);
     gulp.watch(paths.css, ['stylesheet']);
     gulp.watch(paths.js, ['javascript']);
+    gulp.watch(paths.mainJs, ['javascript']);
     gulp.watch(paths.templates , ['templates']);
 });
 
@@ -95,7 +96,6 @@ var javascript = function(){
             jsFiles.push(path.relative('', files[i]));
         }
     }
-    jsFiles = jsFiles.concat(paths.js);
     var bundle = browserify(paths.mainJs)
         .transform(babelify.configure({
             presets: ['es2015']
@@ -103,7 +103,7 @@ var javascript = function(){
         .bundle()
         .pipe(source('app.js'))
         .pipe(buffer());
-    return es.merge(bundle, gulp.src(jsFiles)) 
+    return streamqueue({objectMode: true}, gulp.src(jsFiles), bundle, gulp.src(paths.js))
         .pipe(concat('app.js'))
         .pipe(gulp.dest(output.js));
 };
