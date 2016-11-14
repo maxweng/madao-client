@@ -97,9 +97,9 @@ var javascript = function(){
         }
     }
     var bundle = browserify(paths.mainJs)
-        .transform(babelify.configure({
-            presets: ['es2015']
-        }))
+        .transform('babelify', {
+            presets: ["es2015"]
+        })
         .bundle()
         .pipe(source('app.js'))
         .pipe(buffer());
@@ -186,19 +186,46 @@ gulp.task('copyIndex', ['clean'], function(){
         .pipe(gulp.dest(output.index));
 });
 
-gulp.task('minJs', ['concatJs'], function(){
-    return gulp.src(output.js + '/*.js', {base: output.js})
-        .pipe(clean())
+gulp.task('minJs', function(){
+    var files = mainBowerFiles().concat();
+    var jsFiles = [];
+    for(var i = 0; i < files.length; i++){
+        if(path.extname(files[i]).indexOf('js') >= 0){
+            jsFiles.push(path.relative('', files[i]));
+        }
+    }
+    var bundle = browserify(paths.mainJs)
+        .transform('babelify', {
+            presets: ["es2015", "babili"]
+        })
+        .bundle()
+        .pipe(source('app.js'))
+        .pipe(buffer());
+    return streamqueue({objectMode: true},
+        gulp.src(jsFiles).pipe(uglify()),
+        bundle,
+        gulp.src(paths.js).pipe(uglify()))
+        .pipe(concat('app.js'))
         .pipe(hash(hashOptions))
-        // .pipe(uglify({
-        //     mangle: false
-        // }))
-        // .on('error', function(message, filename, line){
-        //     console.error(message);
-        //     console.error(filename);
-        //     console.error(line);
-        // })
         .pipe(gulp.dest(output.js));
+    // return browserify('./' + output.js + '/app.js')
+    //     .transform('babelify', {
+    //         presets: ['babili']
+    //     })
+    //     .bundle()
+    //     .pipe(source('app.js'))
+    //     .pipe(buffer())
+    //     .pipe(clean())
+    //     .pipe(hash(hashOptions))
+    //     // .pipe(uglify({
+            
+    //     // }))
+    //     // .on('error', function(message, filename, line){
+    //     //     console.error(message);
+    //     //     console.error(filename);
+    //     //     console.error(line);
+    //     // })
+    //     .pipe(gulp.dest(output.js));
 });
 
 gulp.task('minCss', ['concatCss'], function(){
