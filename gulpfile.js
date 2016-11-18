@@ -18,6 +18,7 @@ var babelify = require('babelify');
 var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
 var streamqueue = require('streamqueue');
+var html2pug = require('gulp-html2pug');
 
 var app = argv.app || 'dev';
 var clientBase = 'app';
@@ -241,8 +242,18 @@ var buildIndex = function(){
         throw 'the config \'' + app + '\' is undefined';
     }
     return gulp.src(output.index + '/index.html')
-        .pipe(inject(gulp.src(output.js + '/*.js', {read: false, base: output.js}), {relative: true}))
-        .pipe(inject(gulp.src(output.css + '/*.css', {read: false, base: output.css}), {relative: true}))
+        .pipe(inject(gulp.src(output.js + '/*.js', {read: false, base: output.js}), {
+            relative: true,
+            transform: function(filepath, file, i, length){
+                return '<script src="' + path.join(network.staticHost || '', filepath) + '"></script>'; 
+            }
+        }))
+        .pipe(inject(gulp.src(output.css + '/*.css', {read: false, base: output.css}), {
+            relative: true,
+            transform: function(filepath, file, i, length){
+                return '<link href="' + path.join(network.staticHost || '', filepath) + '" rel="stylesheet">'
+            }
+        }))
         .pipe(inject(gulp.src('./app.json', {read: false}), {
             starttag: 'window.HOST = "',
             endtag: '";',
@@ -280,4 +291,29 @@ gulp.task('ionicServe', ['build', 'watch'], function(){
         console.log(`${data}`);
         done();
     });
+});
+
+var PUBLISH_PATH = '../MADao';
+var TEMPLATE_PATH = path.join(PUBLISH_PATH, 'server', 'templates');
+var STATIC_PATH = path.join(PUBLISH_PATH, 'server', 'static', 'mobile');
+gulp.task('publicClean', function(){
+    return gulp.src([
+            path.join(STATIC_PATH, '**', '*.*'),
+            path.join(TEMPLATE_PATH, 'mobile.pug')
+        ], {read: false})
+        .pipe(clean({force: true}));
+});
+
+gulp.task('publishIndex', ['release'], function(){
+    var publishPath = TEMPLATE_PATH;
+    return gulp.src('www/index.html', {base: 'www'})
+        .pipe(rename('mobile.html'))
+        .pipe(html2pug())
+        .pipe(gulp.dest(publishPath));
+});
+
+gulp.task('publish', ['release', 'publishIndex', 'publicClean'], function(){
+    var publishPath = STATIC_PATH;
+    return gulp.src('www/**/*.*', {base: 'www'})
+        .pipe(gulp.dest(publishPath));
 });
