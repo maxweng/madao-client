@@ -1,5 +1,5 @@
 'use strict';
-var ethUtil = require('ethereumjs-util');
+window.ethUtil = require('ethereumjs-util');
 ethUtil.crypto = require('crypto');
 ethUtil.Tx = require('ethereumjs-tx');
 ethUtil.scrypt = require('scryptsy');
@@ -50,6 +50,15 @@ function ($stateProvider, $urlRouterProvider, $httpProvider) {
                 menuContent: {
                     templateUrl: 'templates/productDetail.html',
                     controller: 'productDetailCtrl'
+                }
+            }
+        })
+        .state('app.test', {
+            url: '/test',
+            views: {
+                menuContent: {
+                    templateUrl: 'templates/test.html',
+                    controller: 'testCtrl'
                 }
             }
         })
