@@ -18,7 +18,7 @@ function(APP_CONFIG, $state){
         parseImage: function(src, size){
             var url = src;
             if(!this.isAbsoluteUrl(src)){
-                url = APP_CONFIG.cdnHost + url;
+                url = APP_CONFIG.staticHost + url;
             }
             if(this.isUpaiYun(url) && size){
                 url += '!' + size;
