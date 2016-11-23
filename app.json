@@ -5,6 +5,6 @@
     },
     "web": {
         "host": "",
-        "staticHost": "/static/mobile"
+        "staticHost": "/static/mobile/"
     }
 }

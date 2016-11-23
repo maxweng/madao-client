@@ -19,6 +19,7 @@ var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
 var streamqueue = require('streamqueue');
 var html2pug = require('gulp-html2pug');
+var html2jade   = require('gulp-html2jade');
 
 var app = argv.app || 'dev';
 var clientBase = 'app';
@@ -307,8 +308,8 @@ gulp.task('publicClean', function(){
 gulp.task('publishIndex', ['release'], function(){
     var publishPath = TEMPLATE_PATH;
     return gulp.src('www/index.html', {base: 'www'})
-        .pipe(rename('mobile.html'))
-        .pipe(html2pug())
+        .pipe(html2jade())
+        .pipe(rename('mobile.pug'))
         .pipe(gulp.dest(publishPath));
 });
 
