@@ -1,7 +1,7 @@
 'use strict';
 ionicApp
 .factory('Ether', ['$resource', '$q',
-function(){
+function($resource,$q){
     var Ether = $resource('/api', {}, {
         //balance: addr
 		//isClassic: true

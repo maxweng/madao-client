@@ -5,7 +5,7 @@ ethUtil.Tx = require('ethereumjs-tx');
 ethUtil.scrypt = require('scryptsy');
 ethUtil.uuid = require('uuid');
 
-window.ionicApp = angular.module('madaoClient', ['ionic', 'ui.router'])
+window.ionicApp = angular.module('madaoClient', ['ionic', 'ui.router','ngResource'])
 .run([function () {
 
 }])
