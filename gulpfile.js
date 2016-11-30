@@ -14,7 +14,6 @@ var replace = require('gulp-replace');
 var argv = require('yargs').argv;
 var config = require('./app.json');
 var browserify = require('browserify');
-var babelify = require('babelify');
 var babel = require('gulp-babel');
 var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
@@ -100,9 +99,6 @@ var javascript = function(){
         }
     }
     var bundle = browserify(paths.mainJs)
-        .transform('babelify', {
-            presets: ["es2015"]
-        })
         .bundle()
         .pipe(source('app.js'))
         .pipe(buffer())
@@ -201,17 +197,18 @@ gulp.task('minJs', function(){
         }
     }
     var bundle = browserify(paths.mainJs)
-        .transform('babelify', {
-            presets: ["es2015", "babili"]
-        })
         .bundle()
         .pipe(source('app.js'))
-        .pipe(buffer());
+        .pipe(buffer())
+        .pipe(babel({
+            presets: ['es2015']
+        }));
     return streamqueue({objectMode: true},
-        gulp.src(jsFiles).pipe(uglify()),
+        gulp.src(jsFiles),
         bundle,
-        gulp.src(paths.js).pipe(uglify()))
+        gulp.src(paths.js))
         .pipe(concat('app.js'))
+        .pipe(uglify())
         .pipe(hash(hashOptions))
         .pipe(gulp.dest(output.js));
     // return browserify('./' + output.js + '/app.js')
