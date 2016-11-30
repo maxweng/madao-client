@@ -1,9 +1,10 @@
 'use strict';
-window.ethUtil = require('ethereumjs-util');
-ethUtil.crypto = require('crypto');
-ethUtil.Tx = require('ethereumjs-tx');
-ethUtil.scrypt = require('scryptsy');
-ethUtil.uuid = require('uuid');
+ window.ethUtil = require('ethereumjs-util');
+ ethUtil.crypto = require('crypto');
+ ethUtil.scrypt = require('scryptsy');
+ ethUtil.uuid = require('uuid');
+ ethUtil.Tx = require('ethereumjs-tx');
+ window.BufferObject = require('buffer');
 
 window.ionicApp = angular.module('madaoClient', ['ionic', 'ui.router','ngResource'])
 .run([function () {

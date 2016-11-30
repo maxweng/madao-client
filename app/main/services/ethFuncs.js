@@ -1,6 +1,6 @@
 'use strict';
 ionicApp
-.factory('ethFuncs', [function () {
+.factory('ethFuncs', ['ethUnits',function (ethUnits) {
     var ethFuncs = {};
     ethFuncs.validateEtherAddress = function (address) {
         if (address.substring(0, 2) != "0x") return false;
@@ -11,7 +11,7 @@ ionicApp
     };
 
     ethFuncs.isChecksumAddress = function (address) {
-        return address == ethUtil.toChecksumAddress(address);
+        return address == ethUnits.toChecksumAddress(address);
     };
 
     ethFuncs.validateHexString = function (str) {
@@ -34,7 +34,7 @@ ionicApp
 
     ethFuncs.addTinyMoreToGas = function (hex) {
         hex = this.sanitizeHex(hex);
-        return new BigNumber(hex).plus(etherUnits.getValueOfUnit('gwei')).toDigits(2).toString(16);
+        return new BigNumber(hex).plus(ethUnits.getValueOfUnit('gwei')).toDigits(2).toString(16);
     };
 
     ethFuncs.decimalToHex = function (dec) {
