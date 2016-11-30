@@ -15,6 +15,7 @@ var argv = require('yargs').argv;
 var config = require('./app.json');
 var browserify = require('browserify');
 var babelify = require('babelify');
+var babel = require('gulp-babel');
 var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
 var streamqueue = require('streamqueue');
@@ -104,7 +105,10 @@ var javascript = function(){
         })
         .bundle()
         .pipe(source('app.js'))
-        .pipe(buffer());
+        .pipe(buffer())
+        .pipe(babel({
+            presets: ['es2015']
+        }));
     return streamqueue({objectMode: true}, gulp.src(jsFiles), bundle, gulp.src(paths.js))
         .pipe(concat('app.js'))
         .pipe(gulp.dest(output.js));
@@ -220,7 +224,7 @@ gulp.task('minJs', function(){
     //     .pipe(clean())
     //     .pipe(hash(hashOptions))
     //     // .pipe(uglify({
-            
+
     //     // }))
     //     // .on('error', function(message, filename, line){
     //     //     console.error(message);
@@ -246,7 +250,7 @@ var buildIndex = function(){
         .pipe(inject(gulp.src(output.js + '/*.js', {read: false, base: output.js}), {
             relative: true,
             transform: function(filepath, file, i, length){
-                return '<script src="' + path.join(network.staticHost || '', filepath) + '"></script>'; 
+                return '<script src="' + path.join(network.staticHost || '', filepath) + '"></script>';
             }
         }))
         .pipe(inject(gulp.src(output.css + '/*.css', {read: false, base: output.css}), {
