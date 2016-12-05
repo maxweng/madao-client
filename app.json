@@ -1,10 +1,12 @@
 {
     "dev": {
         "host": "/api",
-        "staticHost": ""
+        "staticHost": "",
+        "staticWechat": "/static/wechat/"
     },
     "web": {
         "host": "",
-        "staticHost": "/static/mobile/"
+        "staticHost": "/static/mobile/",
+        "staticWechat": "/static/wechat/"
     }
 }

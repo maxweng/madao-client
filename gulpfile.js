@@ -20,6 +20,8 @@ var source = require('vinyl-source-stream');
 var streamqueue = require('streamqueue');
 var html2pug = require('gulp-html2pug');
 var html2jade   = require('gulp-html2jade');
+var fs = require('fs');
+var _ = require('lodash');
 
 var app = argv.app || 'dev';
 var clientBase = 'app';
@@ -306,12 +308,50 @@ gulp.task('publicClean', function(){
         .pipe(clean({force: true}));
 });
 
-gulp.task('publishIndex', ['release'], function(){
+gulp.task('extraJs', ['release'], function(){
+    return gulp.src('www/index.html', {base: 'www'}).on("end", function(){
+        var filepath = path.join(config[app].staticWechat || '','wechat_oauth_sdk.js?appkey=${WECHAT_APP_ID}&debug=false&_=0.1');
+        var INJECT_LIBS = [
+            'http://res.wx.qq.com/open/js/jweixin-1.0.0.js',
+            filepath
+        ];
+
+        var data = fs.readFileSync('www/index.html', "utf-8");
+        var res = [];
+        _.each(data.split("\n"), function(line){
+            var self_line = line;
+            if (self_line.indexOf('"cordova.js"') != -1 || self_line.trim().startsWith("// ")){
+                return;
+            }
+            if (self_line.indexOf('"http://') != -1 || self_line.indexOf('"https://') != -1){
+                res.push(self_line);
+                return;
+            }
+
+            res.push(self_line);
+            if(self_line.indexOf('inject:js') != -1){
+                var space = self_line.split('<!--')[0];
+                res.push([space, '<script src="', INJECT_LIBS[0], '"></script>'].join(''));
+                res.push([space, '<script src=`', INJECT_LIBS[1], '`></script>'].join(''));
+                // res.push([space, 'script(src=`', INJECT_LIBS[1], '`)'].join(''));
+            }
+        });
+        res = res.join("\n");
+        fs.writeFileSync('www/index.html', res, "utf-8");
+    })
+});
+
+gulp.task('publishIndex', ['release','extraJs'], function(){
     var publishPath = TEMPLATE_PATH;
     return gulp.src('www/index.html', {base: 'www'})
         .pipe(html2jade())
         .pipe(rename('mobile.pug'))
-        .pipe(gulp.dest(publishPath));
+        .pipe(gulp.dest(publishPath))
+        .on("end", function(){
+            var data = fs.readFileSync(publishPath+'/mobile.pug', "utf-8");
+            data = data.replace("'`","`").replace("`'","`");
+            fs.writeFileSync(publishPath+'/mobile.pug', data, "utf-8");
+        })
 });
 
 gulp.task('publish', ['release', 'publishIndex', 'publicClean'], function(){
