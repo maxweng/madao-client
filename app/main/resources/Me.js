@@ -11,7 +11,17 @@ function($resource, $q){
                     return $q.reject(responseError);
                 }
             }
-        }
+        },
+        update: {
+            method: 'POST',
+            url: '/api/me',
+            timeout: 8000,
+            interceptor: {
+                responseError: function(responseError){
+                    return $q.reject(responseError);
+                }
+            }
+        },
     });
 
     return Me;

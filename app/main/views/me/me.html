@@ -1,0 +1,45 @@
+<ion-view>
+    <ion-nav-title>个人主页</ion-nav-title>
+    <ion-nav-buttons side="left">
+        <button class="button button-image button-clear button-positive" ui-sref="app.product">
+            返回
+        </button>
+    </ion-nav-buttons>
+    <ion-content class="me padding">
+        <div class="padding text-center">当前价格：1ETH ＝ {{advicedPrice}}RMB</div>
+        <div class="list" ng-show="me.address&&me.encrypted_wallet_key&&!showWalletInfo">
+            <label class="item item-input">
+                <input type="password" placeholder="输入密码查看钱包信息" ng-model="filePassword">
+            </label>
+            <button class="button button-positive button-block" ng-click="decryptWallet(filePassword)">解锁</button>
+        </div>
+        <div class="list" ng-show="me.address&&me.encrypted_wallet_key&&showWalletInfo">
+            <div class="padding-top padding-bottom">钱包地址：{{wallet.address}}</div>
+            <div class="padding-top padding-bottom">钱包余额：{{wallet.balance}} ETH = {{advicedPrice*wallet.balance}} RMB</div>
+        </div>
+        <div class="list" ng-show="!showWallet&&(!me.address||!me.encrypted_wallet_key)">
+            <div class="padding-top padding-bottom">给账号还未绑定钱包，请先生成并绑定钱包</div>
+            <label class="item item-input">
+                <input type="password" placeholder="输入一个强密码（至少9位）" ng-model="password">
+            </label>
+            <button class="button button-positive button-block" ng-click="creatWallet(password)">生成钱包</button>
+        </div>
+        <div class="list" ng-show="showWallet&&(!me.address||!me.encrypted_wallet_key)">
+            <h2 class="title">你的钱包已经生成</h2>
+            <div class="assertive" style="margin-bottom:10px">将来使用钱包时，你需要Keystore文件或者私钥。请做好保存和备份。不要忘记你的密码。如果你没有保存，没有办法恢复钱包。</div>
+            <label>
+                钱包地址
+            </label>
+            <textarea class="form-control" type="text" readonly="readonly">{{wallet.getChecksumAddressString()}}</textarea>
+            <label>
+                私钥（未加密）
+            </label>
+            <textarea class="form-control bigger-on-mobile" type="text" readonly="readonly">{{wallet.getPrivateKeyString()}}</textarea>
+            <label>
+                Keystore File (UTC / JSON · 推荐加密的 · Mist 格式文件)
+            </label>
+            <a class="btn btn-info btn-block" ng-href="{{blobEnc}}" download="{{encFileName}}">下载</a>
+            <button class="button button-positive button-block" ng-click="bindWallet()">绑定钱包</button>
+        </div>
+    </ion-content>
+</ion-view>

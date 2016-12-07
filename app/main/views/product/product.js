@@ -5,27 +5,25 @@ function($scope,Ether,ethFuncs,ethUnits,Wechat,Me){
         'problem':false
     }
 
-    Wechat.loginWechat(function(){
-        alert('success')
-        Me.get().$promise.then(function(){
-            console.log('Mesuccess');
-        },function(err){
-            console.log(err.message)
-        })
-    },function(msg){
-        alert(msg)
-    });
+    Me.get().$promise.then(function(me){
+        $scope.me = me;
+    },function(err){
 
-    var address = '0x219a7AAd9d6d4a4012358B517a1ec983baF01413';
-    var wallet = '0x080cc846cf4aba032f74adf0abc3d065b87dd650';
-    var privateKey = 'b35e22422c47df7da611be662cfcd8e94f5e1255d1ebf6f6dfe33846694e1bd9';
+    })
+
+    var address = '0xbd8cd235466416220ce1cd494dd50eb0006a3a19';
+    var wallet = '0x9353d0a9ae06f455177d533bb966c67823d7ae28';
+    var privateKey = '2dfa390856a5310addce7a07f38d5ade7084a97115b4c6b376acdb99ec70f003';
 
     var getData = function(){
         Ether.getBalance({'balance':address,'isClassic':true}).$promise.then(function(res){
-            //console.log(res)
+            console.log('balance:')
+            console.log(res)
         })
 
         Ether.getTransactionData({'txdata':wallet,'isClassic':true}).$promise.then(function(data){
+            console.log('transactionData:')
+            console.log(data)
             var rawTx = {
     			nonce: ethFuncs.sanitizeHex(data.data.nonce),
     			gasPrice: ethFuncs.sanitizeHex(ethFuncs.addTinyMoreToGas(data.data.gasprice)),
@@ -39,6 +37,7 @@ function($scope,Ether,ethFuncs,ethUnits,Wechat,Me){
             $scope.rawTx = JSON.stringify(rawTx);
     		$scope.signedTx = '0x' + eTx.serialize().toString('hex');
             Ether.sendRawTx({'rawtx':$scope.signedTx,'isClassic':true}).$promise.then(function(res){
+                console.log('Tx:')
                 console.log(res)
                 Ether.getTransactionData({'txdata':res.data,'isClassic':true}).$promise.then(function(d){
                     console.log(d)
@@ -46,5 +45,13 @@ function($scope,Ether,ethFuncs,ethUnits,Wechat,Me){
             })
         })
     }
+
+
+
+    // var web3 = new window.web3();
+    // var MyContract = web3.eth.contract(abi);
+    // var myContractInstance = MyContract.at(address);
+    // console.log(myContractInstance);
+    // console.log(myContractInstance.totalAvailableUserAddresses())
 }])
 ;

@@ -1,10 +1,8 @@
 ionicApp
 .factory('Wechat', ['$resource', '$q','$window','$rootScope',
 function($resource, $q,$window,$rootScope){
-    var SOURCE = 'mp';
     var inWechat = (/MicroMessenger/i).test(window.navigator.userAgent);
     var WXOauth = inWechat? $window.WXOauth :null;
-    // var wx = inWechat? $window.wx : null;
 
     var Wechat = $resource('/api', {}, {
         wechat_login: {
@@ -35,18 +33,17 @@ function($resource, $q,$window,$rootScope){
         if(this.hasAccessToken()){
             this.wechat_login({
                 'access_token':WXOauth?WXOauth.oauthData.access_token:'',
-                'openid':WXOauth?WXOauth.oauthData.openid:'',
-                'source':SOURCE
-            }).$promise.then(function(){
+                'openid':WXOauth?WXOauth.oauthData.openid:''
+            },{}).$promise.then(function(){
                 _successCallback();
             },function(err){
-                _errorCallback(err.message);
+                _errorCallback(err);
             });
         }else{
             if(WXOauth){
                 this.getAccessToken();
             }else{
-                _errorCallback('请在微信中调用本接口');
+                _errorCallback('请在微信中打开');
             }
         }
     }

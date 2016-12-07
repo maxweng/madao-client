@@ -1,5 +1,10 @@
 <ion-view>
     <ion-nav-title>航空意外互助计划</ion-nav-title>
+    <ion-nav-buttons side="right">
+        <button class="button button-image button-clear button-positive" ui-sref="app.me" ng-show="me">
+            我
+        </button>
+    </ion-nav-buttons>
     <ion-content class="product background-gray has-footer">
         <img width="100%" ng-src="{{ 'images/banner.png' | staticSrc }}">
         <div class="background-white padding">

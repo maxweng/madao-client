@@ -4,6 +4,7 @@ ionicApp
     var Wallet = function (priv) {
         this.privKey = priv.length == 32 ? priv : Buffer(priv, 'hex');
     };
+    var Buffer = window.BufferObject.Buffer;
     Wallet.generate = function (icapDirect) {
         if (icapDirect) {
             while (true) {
@@ -20,7 +21,7 @@ ionicApp
     Wallet.prototype.getPrivateKey = function () {
         return this.privKey;
     };
-    
+
     Wallet.prototype.getPrivateKeyString = function () {
         return this.getPrivateKey().toString('hex');
     };
@@ -198,7 +199,7 @@ ionicApp
         var ciphertext = new Buffer(json.crypto.ciphertext, 'hex');
         var mac = ethUtil.sha3(Buffer.concat([derivedKey.slice(16, 32), ciphertext]));
         if (mac.toString('hex') !== json.crypto.mac) {
-            throw new Error('Key derivation failed - possibly wrong passphrase');
+            throw new Error('密码错误');
         }
         var decipher = ethUtil.crypto.createDecipheriv(json.crypto.cipher, derivedKey.slice(0, 16), new Buffer(json.crypto.cipherparams.iv, 'hex'));
         var seed = Wallet.decipherBuffer(decipher, ciphertext, 'hex');
@@ -293,7 +294,7 @@ ionicApp
         else
             throw globalFuncs.errorMsgs[2];
     };
-    
+
     return Wallet;
 }])
 ;
