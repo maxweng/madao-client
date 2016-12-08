@@ -1,16 +1,17 @@
 ionicApp.controller('productCtrl', ['$scope','Ether','ethFuncs','ethUnits','Wechat','Me',
 function($scope,Ether,ethFuncs,ethUnits,Wechat,Me){
+    $scope.$on('$ionicView.beforeEnter', function(){
+        Me.get().$promise.then(function(me){
+            $scope.me = me;
+        },function(err){
+
+        })
+    });
     $scope.views = {
         'assistance':false,
         'problem':false
     }
-
-    Me.get().$promise.then(function(me){
-        $scope.me = me;
-    },function(err){
-
-    })
-
+    
     var address = '0xbd8cd235466416220ce1cd494dd50eb0006a3a19';
     var wallet = '0x9353d0a9ae06f455177d533bb966c67823d7ae28';
     var privateKey = '2dfa390856a5310addce7a07f38d5ade7084a97115b4c6b376acdb99ec70f003';

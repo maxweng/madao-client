@@ -26,7 +26,7 @@
         </div>
         <div class="list" ng-show="showWallet&&(!me.address||!me.encrypted_wallet_key)">
             <h2 class="title">你的钱包已经生成</h2>
-            <div class="assertive" style="margin-bottom:10px">将来使用钱包时，你需要Keystore文件或者私钥。请做好保存和备份。不要忘记你的密码。如果你没有保存，没有办法恢复钱包。</div>
+            <div class="assertive" style="margin-bottom:10px">请做好保存和备份。不要忘记你的私钥和密码。如果你没有保存，没有办法恢复钱包。</div>
             <label>
                 钱包地址
             </label>
@@ -35,10 +35,10 @@
                 私钥（未加密）
             </label>
             <textarea class="form-control bigger-on-mobile" type="text" readonly="readonly">{{wallet.getPrivateKeyString()}}</textarea>
-            <label>
+            <!-- <label>
                 Keystore File (UTC / JSON · 推荐加密的 · Mist 格式文件)
             </label>
-            <a class="btn btn-info btn-block" ng-href="{{blobEnc}}" download="{{encFileName}}">下载</a>
+            <a class="button button-positive button-block button-clear" ng-href="{{blobEnc}}" download="{{encFileName}}">下载</a> -->
             <button class="button button-positive button-block" ng-click="bindWallet()">绑定钱包</button>
         </div>
     </ion-content>
