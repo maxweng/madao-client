@@ -1,27 +1,32 @@
-ionicApp.controller('productCtrl', ['$scope','Ether','ethFuncs','ethUnits','Wechat','Me',
-function($scope,Ether,ethFuncs,ethUnits,Wechat,Me){
+ionicApp.controller('productCtrl', ['$scope','Ether','ethFuncs','ethUnits','Wechat','Me','web3Provider','Coinprice',
+function($scope,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice){
     $scope.$on('$ionicView.beforeEnter', function(){
-        Me.get().$promise.then(function(me){
-            $scope.me = me;
-        },function(err){
+        Ether.getBalance({'balance':window.MDC.address,'isClassic':true}).$promise.then(function(res){
+            $scope.totalBalance = res.data.balance;
+        });
 
+        Coinprice.get().$promise.then(function(res){
+            $scope.advicedPrice = res.ethcny;
+        },function(msg){
+            console.log(msg)
+            alert(JSON.stringify(msg))
+        });
+
+        window.mdc.totalAvailableUserAddresses().then(function(res){
+            $scope.totalPeople = res.toNumber();
         })
     });
+
     $scope.views = {
         'assistance':false,
         'problem':false
     }
-    
-    var address = '0xbd8cd235466416220ce1cd494dd50eb0006a3a19';
-    var wallet = '0x9353d0a9ae06f455177d533bb966c67823d7ae28';
-    var privateKey = '2dfa390856a5310addce7a07f38d5ade7084a97115b4c6b376acdb99ec70f003';
+
+    var wallet = '0x4db091998c8a6530c312211113844b34968fffb3';
+    var privateKey = 'f0003dcea6610badbe043593e37ec4c2860f6acd29338626eb9e142992b9c250';
+    web3Provider.init(wallet,privateKey);
 
     var getData = function(){
-        Ether.getBalance({'balance':address,'isClassic':true}).$promise.then(function(res){
-            console.log('balance:')
-            console.log(res)
-        })
-
         Ether.getTransactionData({'txdata':wallet,'isClassic':true}).$promise.then(function(data){
             console.log('transactionData:')
             console.log(data)
@@ -35,7 +40,7 @@ function($scope,Ether,ethFuncs,ethUnits,Wechat,Me){
     		}
             var eTx = new window.ethUtil.Tx(rawTx);
             eTx.sign(new BufferObject.Buffer(privateKey, 'hex'));
-            $scope.rawTx = JSON.stringify(rawTx);
+            //$scope.rawTx = JSON.stringify(rawTx);
     		$scope.signedTx = '0x' + eTx.serialize().toString('hex');
             Ether.sendRawTx({'rawtx':$scope.signedTx,'isClassic':true}).$promise.then(function(res){
                 console.log('Tx:')
@@ -46,13 +51,6 @@ function($scope,Ether,ethFuncs,ethUnits,Wechat,Me){
             })
         })
     }
-
-
-
-    // var web3 = new window.web3();
-    // var MyContract = web3.eth.contract(abi);
-    // var myContractInstance = MyContract.at(address);
-    // console.log(myContractInstance);
-    // console.log(myContractInstance.totalAvailableUserAddresses())
+    //getData();
 }])
 ;

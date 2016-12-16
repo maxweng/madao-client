@@ -13,6 +13,11 @@ function($resource,$q){
         getTransactionData: {
             method: 'POST'
         },
+        // txId: The transaction hash
+        // isClassic: true
+        getTransaction: {
+            method: 'POST'
+        },
         //rawtx: rawTx,
 		//isClassic: true
         sendRawTx: {

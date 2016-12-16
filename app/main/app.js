@@ -1,11 +1,14 @@
 'use strict';
- window.ethUtil = require('ethereumjs-util');
- ethUtil.crypto = require('crypto');
- ethUtil.scrypt = require('scryptsy');
- ethUtil.uuid = require('uuid');
- ethUtil.Tx = require('ethereumjs-tx');
- window.web3 = require('web3');
- window.BufferObject = require('buffer');
+window.ethUtil = require('ethereumjs-util');
+ethUtil.crypto = require('crypto');
+ethUtil.scrypt = require('scryptsy');
+ethUtil.uuid = require('uuid');
+ethUtil.Tx = require('ethereumjs-tx');
+window.Web3 = require('web3');
+window.BufferObject = require('buffer');
+window.MDC = require('./MDC.sol.js');
+window.HookedWeb3Provider = require('hooked-web3-provider');
+window.MBSProvider = require('./MBSProvider.js');
 
 window.ionicApp = angular.module('madaoClient', ['ionic', 'ui.router','ngResource'])
 .run(['Wechat','Me',function (Wechat,Me) {
@@ -58,7 +61,7 @@ function ($stateProvider, $urlRouterProvider, $httpProvider) {
             }
         })
         .state('app.productDetail', {
-            url: '/product/:id',
+            url: '/productDetail',
             views: {
                 menuContent: {
                     templateUrl: 'templates/productDetail.html',
@@ -75,6 +78,24 @@ function ($stateProvider, $urlRouterProvider, $httpProvider) {
                 }
             }
         })
+        .state('app.addFlight', {
+            url: '/addFlight',
+            views: {
+                menuContent: {
+                    templateUrl: 'templates/addFlight.html',
+                    controller: 'addFlightCtrl'
+                }
+            }
+        })
+        .state('app.claims', {
+            url: '/claims',
+            views: {
+                menuContent: {
+                    templateUrl: 'templates/claims.html',
+                    controller: 'claimsCtrl'
+                }
+            }
+        })
         .state('app.test', {
             url: '/test',
             views: {
@@ -85,5 +106,5 @@ function ($stateProvider, $urlRouterProvider, $httpProvider) {
             }
         })
         ;
-    $urlRouterProvider.otherwise('/app/product');
+    $urlRouterProvider.otherwise('/app/me');
 }]);

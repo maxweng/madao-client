@@ -11,6 +11,16 @@ function($resource, $q){
                     return $q.reject(responseError);
                 }
             }
+        },
+        add: {
+            method: 'POST',
+            url: '/api/coinorders',
+            timeout: 8000,
+            interceptor: {
+                responseError: function(responseError){
+                    return $q.reject(responseError);
+                }
+            }
         }
     });
 

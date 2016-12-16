@@ -3,7 +3,7 @@ ionicApp
 .factory('Coinordergetpayparams', ['$resource', '$q',
 function($resource, $q){
     var coinordergetpayparams = $resource('/api', {}, {
-        get: {
+        add: {
             method: 'POST',
             url: '/api/coinordergetpayparams',
             timeout: 8000,
