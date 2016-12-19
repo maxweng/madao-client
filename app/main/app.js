@@ -43,20 +43,56 @@ function ($stateProvider, $urlRouterProvider, $httpProvider) {
                 }
             }
         })
+        .state('app.tabs', {
+            url: '/tabs',
+            views: {
+                menuContent: {
+                    templateUrl: 'templates/tabs.html'
+                }
+            },
+            abstract: true
+        })
+        .state('app.tabs.me', {
+            url: '/me',
+            views: {
+                tabContent: {
+                    templateUrl: 'templates/me.html',
+                    controller: 'meCtrl'
+                }
+            }
+        })
+        .state('app.tabs.addFlight', {
+            url: '/addFlight',
+            views: {
+                tabContent: {
+                    templateUrl: 'templates/addFlight.html',
+                    controller: 'addFlightCtrl'
+                }
+            }
+        })
+        .state('app.tabs.claims', {
+            url: '/claims',
+            views: {
+                tabContent: {
+                    templateUrl: 'templates/claims.html',
+                    controller: 'claimsCtrl'
+                }
+            }
+        })
+        .state('app.tabs.product', {
+            url: '/product',
+            views: {
+                tabContent: {
+                    templateUrl: 'templates/product.html',
+                    controller: 'productCtrl'
+                }
+            }
+        })
         .state('app.provision', {
             url: '/provision',
             views: {
                 menuContent: {
                     templateUrl: 'templates/provision.html'
-                }
-            }
-        })
-        .state('app.product', {
-            url: '/product',
-            views: {
-                menuContent: {
-                    templateUrl: 'templates/product.html',
-                    controller: 'productCtrl'
                 }
             }
         })
@@ -66,33 +102,6 @@ function ($stateProvider, $urlRouterProvider, $httpProvider) {
                 menuContent: {
                     templateUrl: 'templates/productDetail.html',
                     controller: 'productDetailCtrl'
-                }
-            }
-        })
-        .state('app.me', {
-            url: '/me',
-            views: {
-                menuContent: {
-                    templateUrl: 'templates/me.html',
-                    controller: 'meCtrl'
-                }
-            }
-        })
-        .state('app.addFlight', {
-            url: '/addFlight',
-            views: {
-                menuContent: {
-                    templateUrl: 'templates/addFlight.html',
-                    controller: 'addFlightCtrl'
-                }
-            }
-        })
-        .state('app.claims', {
-            url: '/claims',
-            views: {
-                menuContent: {
-                    templateUrl: 'templates/claims.html',
-                    controller: 'claimsCtrl'
                 }
             }
         })
@@ -106,5 +115,5 @@ function ($stateProvider, $urlRouterProvider, $httpProvider) {
             }
         })
         ;
-    $urlRouterProvider.otherwise('/app/me');
+    $urlRouterProvider.otherwise('/app/tabs/me');
 }]);

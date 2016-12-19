@@ -3,7 +3,8 @@ ionicApp.controller('productDetailCtrl', ['$scope','Coinprice','tools','Me','Eth
 function($scope,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,Coinorders,Coinordergetpayparams,Wechat){
     $scope.$on('$ionicView.beforeEnter', function(){
         Coinprice.get().$promise.then(function(res){
-            joinPrice = 0.1/res.ethcny;
+            $scope.advicedPrice = res.ethcny;
+            joinPrice = 1;
         },function(msg){
             alert(JSON.stringify(msg))
         });
@@ -72,9 +73,17 @@ function($scope,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,Coinorde
 
         var id = tools.hexEncode($scope.data.id);
         $scope.data.noncestr = tools.noncestr($scope.$root.address);
-        window.mdc.signUp($scope.data.recommender || "", $scope.data.name, $scope.data.country, id, $scope.data.noncestr, { from: $scope.$root.address, value: ethUnits.toWei(joinPrice+1,"ether"),'gasLimit':1000000,'gasPrice':20000000000}).then(function (transactionId) {
+        window.mdc.signUp($scope.data.recommender || "", $scope.data.name, $scope.data.country, id, $scope.data.noncestr, { from: $scope.$root.address, value: ethUnits.toWei(joinPrice,"ether"),'gasLimit':1000000,'gasPrice':20000000000}).then(function (transactionId) {
             console.log('Sign up transaction ID: ', '' + transactionId);
-            alert("加入成功")
+            Ether.getTransaction({'txId':transactionId,'isClassic':true}).$promise.then(function(res){
+                if(res.data.transactionIndex==0){
+                    alert("加入成功")
+                }else{
+                    alert("加入失败")
+                }
+            },function(err){
+                alert(err.message);
+            });
         }).catch(function(error){
             if(error&&(error.message.indexOf("sender doesn't have enough funds to send tx")!=-1||
         error.message.indexOf("Account does not exist or account balance too low")!=-1)){
@@ -87,10 +96,10 @@ function($scope,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,Coinorde
         });
 
         Me.get().$promise.then(function(res){
-            $scope.me.real_name = $scope.data.name;
-            $scope.me.country = $scope.data.country;
-            $scope.me.id_no = $scope.data.id;
-            Me.update($scope.me).$promise.then(function(res){
+            res.real_name = $scope.data.name;
+            res.country = $scope.data.country;
+            res.id_no = $scope.data.id;
+            Me.update(res).$promise.then(function(res){
                 $scope.me = res;
             },function(msg){
                 alert(JSON.stringify(msg))

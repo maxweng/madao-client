@@ -1,8 +1,8 @@
 'use strict';
 ionicApp
 .controller('meCtrl', ['$scope', '$state','Wallet','Me','globalFuncs',
-'Wechat','$http','Coinprice','Coinorders','Ether','web3Provider',
-function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders,Ether,web3Provider) {
+'Wechat','$http','Coinprice','Coinorders','Ether','web3Provider','ethUnits',
+function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders,Ether,web3Provider,ethUnits) {
     $scope.$on('$ionicView.beforeEnter', function(){
         $scope.me = {};
         Me.get().$promise.then(function(res){
@@ -81,6 +81,9 @@ function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders
 		}
 
         web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
+        window.mdc.balances(wallet.getAddressString()).then(function(res){
+            $scope.balance = ethUnits.toEther(res.toNumber(),'wei');
+        })
         Ether.getBalance({'balance':wallet.getAddressString(),'isClassic':true}).$promise.then(function(res){
             $scope.wallet = res.data;
             $scope.showWalletInfo = true;

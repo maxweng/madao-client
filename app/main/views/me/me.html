@@ -10,11 +10,8 @@
         </div>
         <div class="list" ng-show="me.address&&me.encrypted_wallet_key&&showWalletInfo">
             <div class="padding-top padding-bottom">钱包地址：{{wallet.address}}</div>
-            <div class="padding-top padding-bottom">钱包余额：{{wallet.balance}} ETH = {{advicedPrice*wallet.balance}} RMB</div>
-
-            <div ui-sref="app.product">点我去参加</div>
-            <div ui-sref="app.addFlight">点我去登记</div>
-            <div ui-sref="app.claims">点我去理赔</div>
+            <div class="padding-top padding-bottom">钱包余额：{{wallet.balance | number:2}} ETH = {{wallet.balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
+            <div class="padding-top padding-bottom">互助计划余额：{{balance | number:2}} ETH = {{balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
         </div>
         <div class="list" ng-show="!showWallet&&(!me.address||!me.encrypted_wallet_key)">
             <div class="padding-top padding-bottom">账号还未绑定钱包，请先生成并绑定钱包</div>
