@@ -73,7 +73,9 @@ function($scope,Ether,web3Provider){
         window.mdc.addFlight(userFlight.flight.flightNumber, userFlight.flight.departureTime, { from: userFlight.user.account, gas: 1000000, gasPrice: 20000000000 }).then(function (transactionId) {
             console.log('Add flight transaction ID: ', '' + transactionId);
             Ether.getTransaction({'txId':transactionId,'isClassic':true}).$promise.then(function(res){
-                if(res.data.transactionIndex==0){
+                if(!res.data.transactionIndex&&res.data.transactionIndex!=0){
+                    alert("正在处理，可能需要几分钟请稍等")
+                }else if(res.data.transactionIndex==0){
                     alert("登记成功")
                 }else{
                     alert("登记失败")

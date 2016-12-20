@@ -136,6 +136,7 @@
     }
 
     var changeParams = function(method,payload){
+        completionAssign();
         if(method == 'eth_call'){
             payload = {
                 'isClassic':true,
@@ -144,7 +145,6 @@
         }
         if(method == 'eth_sendTransaction'){
             var eTx = new window.ethUtil.Tx(payload.params[0]);
-            completionAssign();
             eTx.sign(new BufferObject.Buffer(privateKey, 'hex'));
             var signedTx = '0x' + eTx.serialize().toString('hex');
             payload = {

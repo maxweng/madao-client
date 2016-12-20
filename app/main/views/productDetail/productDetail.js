@@ -1,6 +1,6 @@
-ionicApp.controller('productDetailCtrl', ['$scope','Coinprice','tools','Me','Ether','web3Provider','ethFuncs',
+ionicApp.controller('productDetailCtrl', ['$scope','$state','Coinprice','tools','Me','Ether','web3Provider','ethFuncs',
 'ethUnits','Coinorders','Coinordergetpayparams','Wechat',
-function($scope,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,Coinorders,Coinordergetpayparams,Wechat){
+function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,Coinorders,Coinordergetpayparams,Wechat){
     $scope.$on('$ionicView.beforeEnter', function(){
         Coinprice.get().$promise.then(function(res){
             $scope.advicedPrice = res.ethcny;
@@ -13,17 +13,34 @@ function($scope,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,Coinorde
     $scope.data = {};
 
     var bayCoin = function(joinPrice){
+        if(!Wechat.hasAccessToken()){
+            Wechat.getAccessToken();
+            return;
+        }
         Me.get().$promise.then(function(me){
             Coinorders.add({},{'coin':joinPrice}).$promise.then(function(data){
-                if(!Wechat.hasAccessToken())Wechat.getAccessToken();
-                Coinordergetpayparams.add({'access_token':WXOauth.oauthData.access_token,'openid':WXOauth.oauthData.openid,'out_trade_no':data.out_trade_no},{}).$promise.then(function(data1){
+                console.log(data)
+                Coinordergetpayparams.add({'access_token':WXOauth.oauthData.access_token,'openid':WXOauth.oauthData.openid,'out_trade_no':data.out_trade_no},{}).$promise.then(function(wechatParams){
+                    console.log(wechatParams)
+                    var params = {
+                        'appId':wechatParams.appId,
+                        'nonceStr':wechatParams.nonceStr,
+                        'package':wechatParams.package,
+                        'paySign':wechatParams.paySign,
+                        'signType':wechatParams.signType,
+                        'timeStamp':wechatParams.timeStamp
+                    }
+                    console.log(params)
                     var onBridgeReady = function(){
+                       console.log("onBridgeReady")
                        WeixinJSBridge.invoke(
-                           'getBrandWCPayRequest', data1, function(res){
+                           'getBrandWCPayRequest', params, function(res){
+                               console.log("onBridgeReadyResult")
                                if(res.err_msg == "get_brand_wcpay_request:ok" ) {
-                                   alert("pay succeeded");
+                                   alert("支付成功");
+                                   $scope.join();
                                }else{
-                                   alert("pay failed");
+                                   alert("支付失败");
                                }
                            }
                        );
@@ -76,8 +93,12 @@ function($scope,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,Coinorde
         window.mdc.signUp($scope.data.recommender || "", $scope.data.name, $scope.data.country, id, $scope.data.noncestr, { from: $scope.$root.address, value: ethUnits.toWei(joinPrice,"ether"),'gasLimit':1000000,'gasPrice':20000000000}).then(function (transactionId) {
             console.log('Sign up transaction ID: ', '' + transactionId);
             Ether.getTransaction({'txId':transactionId,'isClassic':true}).$promise.then(function(res){
-                if(res.data.transactionIndex==0){
+                if(!res.data.transactionIndex&&res.data.transactionIndex!=0){
+                    alert("正在处理，可能需要几分钟请稍等")
+                    $state.go('app.tabs.product');
+                }else if(res.data.transactionIndex==0){
                     alert("加入成功")
+                    $state.go('app.tabs.product');
                 }else{
                     alert("加入失败")
                 }

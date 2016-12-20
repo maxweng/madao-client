@@ -22,6 +22,15 @@ window.ionicApp = angular.module('madaoClient', ['ionic', 'ui.router','ngResourc
         });
     })
 }])
+.config(['$ionicConfigProvider', function($ionicConfigProvider) {
+    $ionicConfigProvider.navBar.alignTitle('center');
+    $ionicConfigProvider.backButton.icon('ion-ios-arrow-back').previousTitleText(false);
+    $ionicConfigProvider.platform.android.backButton.text('返回');
+    $ionicConfigProvider.platform.ios.backButton.text('返回');
+    $ionicConfigProvider.platform.android.tabs.style('standard');
+    $ionicConfigProvider.views.transition('android');
+    $ionicConfigProvider.platform.android.tabs.position('bottom');
+}])
 .config(['$compileProvider', function($compileProvider){
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|blob|mailto|file):/);
 }])

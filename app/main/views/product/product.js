@@ -22,6 +22,20 @@ function($scope,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice){
         'problem':false
     }
 
+    $scope.viewStatus = function(){
+        window.mdc.infoHashes.call($scope.$root.address).then(function (res) {
+            var available = !!res[1];
+            if(available){
+                alert('已加入')
+            }else{
+                alert('未加入')
+            }
+        }).catch(function(err){
+            console.log(err);
+            alert('获取信息失败')
+        });
+    }
+
     // var wallet = '0x4db091998c8a6530c312211113844b34968fffb3';
     // var privateKey = 'f0003dcea6610badbe043593e37ec4c2860f6acd29338626eb9e142992b9c250';
     // web3Provider.init(wallet,privateKey);
