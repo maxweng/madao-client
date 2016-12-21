@@ -2,6 +2,7 @@ ionicApp.controller('productDetailCtrl', ['$scope','$state','Coinprice','tools',
 'ethUnits','Coinorders','Coinordergetpayparams','Wechat',
 function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,Coinorders,Coinordergetpayparams,Wechat){
     $scope.$on('$ionicView.beforeEnter', function(){
+        if(!window.mdc)alert("请先解锁钱包")
         Coinprice.get().$promise.then(function(res){
             $scope.advicedPrice = res.ethcny;
             joinPrice = 1;
@@ -96,11 +97,9 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,C
                 if(!res.data.transactionIndex&&res.data.transactionIndex!=0){
                     alert("正在处理，可能需要几分钟请稍等")
                     $state.go('app.tabs.product');
-                }else if(res.data.transactionIndex==0){
+                }else{
                     alert("加入成功")
                     $state.go('app.tabs.product');
-                }else{
-                    alert("加入失败")
                 }
             },function(err){
                 alert(err.message);

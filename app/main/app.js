@@ -12,15 +12,15 @@ window.MBSProvider = require('./MBSProvider.js');
 
 window.ionicApp = angular.module('madaoClient', ['ionic', 'ui.router','ngResource'])
 .run(['Wechat','Me',function (Wechat,Me) {
-    Me.get().$promise.then(function(me){
-
-    },function(err){
-        Wechat.loginWechat(function(){
-            console.log('登录成功')
-        },function(msg){
-            console.log(msg)
-        });
-    })
+    // Me.get().$promise.then(function(me){
+    //
+    // },function(err){
+    //     Wechat.loginWechat(function(){
+    //         console.log('登录成功')
+    //     },function(msg){
+    //         console.log(msg)
+    //     });
+    // })
 }])
 .config(['$ionicConfigProvider', function($ionicConfigProvider) {
     $ionicConfigProvider.navBar.alignTitle('center');

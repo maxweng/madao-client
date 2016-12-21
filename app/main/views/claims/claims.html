@@ -11,5 +11,19 @@
         </label>
         <button class="button button-positive button-block" ng-click="claim()">点我理赔</button>
         <button class="button button-positive button-block" ng-click="getClaims()">点我查看结果</button>
+        <ul class="list" ng-repeat="claim in claims">
+            <li class="item">
+                航班号：<div class="table-list">{{claim.flightNumber}}</div>
+            </li>
+            <li class="item">
+                起飞时间：<div class="table-list">{{claim.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}</div>
+            </li>
+            <li class="item">
+                编号：<div class="table-list">{{claim.oracleItId}}</div>
+            </li>
+            <li class="item">
+                申请状态：<div class="table-list">{{claim.status | claimStatus}}</div>
+            </li>
+        </ul>
     </ion-content>
 </ion-view>

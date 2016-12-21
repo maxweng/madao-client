@@ -1,13 +1,30 @@
-ionicApp.controller('addFlightCtrl', ['$scope','Ether','web3Provider',
-function($scope,Ether,web3Provider){
+ionicApp.controller('addFlightCtrl', ['$scope','$state','Ether','web3Provider','Wallet','Wechat',
+function($scope,$state,Ether,web3Provider,Wallet,Wechat){
     $scope.$on('$ionicView.beforeEnter', function(){
-        // var wallet = '0x038036734702226a9e2731d061683856ea673967';
-        // var privateKey = '9c5218266a996fda3f18905532a632a5ec748bff5808dd89716f1047413dcbbf';
-        // web3Provider.init(wallet,privateKey);
-        // Ether.getBalance({'balance':$scope.$root.address,'isClassic':true}).$promise.then(function(res){
-        //
-        //     console.log(res)
-        // });
+        if(!window.mdc){
+            Me.get().$promise.then(function(res){
+                $scope.me = res;
+                var wallet;
+                var str=prompt("请先解锁钱包","密码");
+                if(str){
+                    try {
+                        wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, parseInt(str));
+            		} catch (e) {
+            			alert(e)
+                        $state.go("app.tabs.me")
+            		}
+                    web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
+                }else{
+                    $state.go("app.tabs.me")
+                }
+            },function(err){
+                Wechat.loginWechat(function(){
+                    console.log('登录成功')
+                },function(msg){
+                    console.log(msg)
+                });
+            })
+        }
     });
 
     $scope.data = {};
@@ -48,7 +65,9 @@ function($scope,Ether,web3Provider){
 
     $scope.get = function(){
         getFlights($scope.$root.address,function(res){
-            alert(JSON.stringify(res))
+            $scope.flights = res;
+            if($scope.flights.length == 0)alert("暂无记录")
+            $scope.$apply()
         })
     }
 
@@ -75,10 +94,8 @@ function($scope,Ether,web3Provider){
             Ether.getTransaction({'txId':transactionId,'isClassic':true}).$promise.then(function(res){
                 if(!res.data.transactionIndex&&res.data.transactionIndex!=0){
                     alert("正在处理，可能需要几分钟请稍等")
-                }else if(res.data.transactionIndex==0){
-                    alert("登记成功")
                 }else{
-                    alert("登记失败")
+                    alert("登记成功")
                 }
             },function(err){
                 alert(err.message);

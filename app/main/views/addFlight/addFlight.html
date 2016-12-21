@@ -11,5 +11,19 @@
         </label>
         <button class="button button-positive button-block" ng-click="add()">点我登记</button>
         <button class="button button-positive button-block" ng-click="get()">点我获取记录</button>
+        <ul class="list" ng-repeat="flight in flights">
+            <li class="item">
+                航班号：<div class="table-list">{{flight.flightNumber}}</div>
+            </li>
+            <li class="item">
+                起飞时间：<div class="table-list">{{flight.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}</div>
+            </li>
+            <li class="item">
+                编号：<div class="table-list">{{flight.queryNo}}</div>
+            </li>
+            <li class="item">
+                是否申请理赔：<div class="table-list">{{flight.claimed?"是":"否"}}</div>
+            </li>
+        </ul>
     </ion-content>
 </ion-view>

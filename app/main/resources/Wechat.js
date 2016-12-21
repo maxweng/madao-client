@@ -26,11 +26,14 @@ function($resource, $q,$window,$rootScope){
     }
 
     Wechat.getAccessToken = function(){
+        console.log(WXOauth)
+        console.log(location.href.split("#")[0])
         if(WXOauth)WXOauth.login(location.href.split("#")[0], undefined, false);
     }
 
     Wechat.loginWechat = function(_successCallback,_errorCallback){
         if(this.hasAccessToken()){
+            console.log('wechathasToken')
             this.wechat_login({
                 'access_token':WXOauth?WXOauth.oauthData.access_token:'',
                 'openid':WXOauth?WXOauth.oauthData.openid:''
@@ -41,6 +44,7 @@ function($resource, $q,$window,$rootScope){
             });
         }else{
             if(WXOauth){
+                console.log('wechatnoToken')
                 this.getAccessToken();
             }else{
                 _errorCallback('请在微信中打开');

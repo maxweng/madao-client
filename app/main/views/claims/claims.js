@@ -1,7 +1,23 @@
-ionicApp.controller('claimsCtrl', ['$scope','Ether','Me','tools','web3Provider',
-function($scope,Ether,Me,tools,web3Provider){
+ionicApp.controller('claimsCtrl', ['$scope','$state','Ether','Me','tools','web3Provider','Wechat','Wallet',
+function($scope,$state,Ether,Me,tools,web3Provider,Wechat,Wallet){
     $scope.$on('$ionicView.beforeEnter', function(){
         Me.get().$promise.then(function(me){
+            if(!window.mdc){
+                var wallet;
+                var str=prompt("请先解锁钱包","密码");
+                if(str){
+                    try {
+                        wallet = Wallet.getWalletFromPrivKeyFile(me.encrypted_wallet_key, parseInt(str));
+            		} catch (e) {
+            			alert(e)
+                        $state.go("app.tabs.me")
+            		}
+                    web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
+                }else{
+                    $state.go("app.tabs.me")
+                }
+            }
+
             userFlight = {
                 user: {
                     account: $scope.$root.address,
@@ -13,9 +29,12 @@ function($scope,Ether,Me,tools,web3Provider){
                 flight:{}
             }
         },function(err){
-            alert(err.message)
+            Wechat.loginWechat(function(){
+                console.log('登录成功')
+            },function(msg){
+                console.log(msg)
+            });
         })
-        // web3Provider.init("","");
     });
     $scope.data = {};
     var userFlight = null;
@@ -63,7 +82,9 @@ function($scope,Ether,Me,tools,web3Provider){
 
     $scope.getClaims = function(){
         getInfo($scope.$root.address,function(res){
-            alert(JSON.stringify(res))
+            $scope.claims = res;
+            if($scope.claims.length == 0)alert("暂无记录")
+            $scope.$apply()
         })
     }
 
@@ -93,10 +114,8 @@ function($scope,Ether,Me,tools,web3Provider){
                         console.log(res);
                         if(!res.data.transactionIndex&&res.data.transactionIndex!=0){
                             alert("正在处理，可能需要几分钟请稍等")
-                        }else if(res.data.transactionIndex==0){
-                            alert("申请成功")
                         }else{
-                            alert("申请失败")
+                            alert("申请成功")
                         }
                     },function(err){
                         alert(err.message);

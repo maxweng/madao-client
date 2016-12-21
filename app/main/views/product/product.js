@@ -1,20 +1,51 @@
-ionicApp.controller('productCtrl', ['$scope','Ether','ethFuncs','ethUnits','Wechat','Me','web3Provider','Coinprice',
-function($scope,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice){
+ionicApp.controller('productCtrl', ['$scope','$state','Ether','ethFuncs','ethUnits',
+'Wechat','Me','web3Provider','Coinprice','Wallet',
+function($scope,$state,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice,Wallet){
     $scope.$on('$ionicView.beforeEnter', function(){
-        Ether.getBalance({'balance':window.MDC.address,'isClassic':true}).$promise.then(function(res){
-            $scope.totalBalance = res.data.balance;
-        });
+        var getData = function(){
+            Ether.getBalance({'balance':window.MDC.address,'isClassic':true}).$promise.then(function(res){
+                $scope.totalBalance = res.data.balance;
+            });
 
-        Coinprice.get().$promise.then(function(res){
-            $scope.advicedPrice = res.ethcny;
-        },function(msg){
-            console.log(msg)
-            alert(JSON.stringify(msg))
-        });
+            Coinprice.get().$promise.then(function(res){
+                $scope.advicedPrice = res.ethcny;
+            },function(msg){
+                console.log(msg)
+                alert(JSON.stringify(msg))
+            });
 
-        window.mdc.totalAvailableUserAddresses().then(function(res){
-            $scope.totalPeople = res.toNumber();
-        })
+            window.mdc.totalAvailableUserAddresses().then(function(res){
+                $scope.totalPeople = res.toNumber();
+            })
+        }
+
+        if(!window.mdc){
+            Me.get().$promise.then(function(res){
+                $scope.me = res;
+                var wallet;
+                var str=prompt("请先解锁钱包","密码");
+                if(str){
+                    try {
+                        wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, parseInt(str));
+            		} catch (e) {
+            			alert(e)
+                        $state.go("app.tabs.me")
+            		}
+                    web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
+                    getData();
+                }else{
+                    $state.go("app.tabs.me")
+                }
+            },function(err){
+                Wechat.loginWechat(function(){
+                    console.log('登录成功')
+                },function(msg){
+                    console.log(msg)
+                });
+            })
+        }else{
+            getData();
+        }
     });
 
     $scope.views = {

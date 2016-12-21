@@ -14,8 +14,8 @@ function($rootScope,APP_CONFIG){
 
     return {
         init: function(userAddress,userkey){
-            // userAddress = '0xb57be5149842f218a95da90599ba2b7a70f888e7';
-            // userkey = 'a8d9edff20ef6fd7000f43ec103904bdc173ea55e1008413dcb744d4bf016590';
+            userAddress = '0xb57be5149842f218a95da90599ba2b7a70f888e7';
+            userkey = 'a8d9edff20ef6fd7000f43ec103904bdc173ea55e1008413dcb744d4bf016590';
             if (typeof window.web3 !== "undefined") {
                 window.web3 = new Web3(window.web3.currentProvider);
             }else{
