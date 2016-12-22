@@ -2,16 +2,15 @@
 ionicApp
 .controller('meCtrl', ['$scope', '$state','Wallet','Me','globalFuncs',
 'Wechat','$http','Coinprice','Coinorders','Ether','web3Provider','ethUnits',
-'Coinorders','Coinordergetpayparams','$timeout',
+'Coinorders','Coinordergetpayparams','$timeout','$ionicLoading',
 function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders,
-    Ether,web3Provider,ethUnits,Coinorders,Coinordergetpayparams,$timeout) {
+    Ether,web3Provider,ethUnits,Coinorders,Coinordergetpayparams,$timeout,$ionicLoading) {
     $scope.$on('$ionicView.beforeEnter', function(){
         $scope.me = {};
         $timeout(function(){
             Me.get().$promise.then(function(res){
                 if(!Wechat.hasAccessToken())Wechat.getAccessToken();
                 $scope.me = res;
-                $scope.getOrder();
             },function(err){
                 Wechat.loginWechat(function(){
                     console.log('登录成功')
@@ -73,7 +72,7 @@ function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders
         $scope.page = 1;
         $scope.getOrder();
         window.mdc.balances($scope.walletObj.getAddressString()).then(function(res){
-            $scope.balance = res.toNumber();
+            $scope.balance = res.toNumber()+"";
         })
         Ether.getBalance({'balance':$scope.walletObj.getAddressString(),'isClassic':true}).$promise.then(function(res){
             $scope.wallet = res.data;
@@ -89,11 +88,14 @@ function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders
 
     $scope.page = 1;
     $scope.getOrder = function(){
+        $ionicLoading.show();
         Coinorders.get({'page':$scope.page}).$promise.then(function(res){
             console.log(res)
             $scope.orders = res;
+            $ionicLoading.hide();
         },function(msg){
             alert(JSON.stringify(msg))
+            $ionicLoading.hide();
         });
     }
 
@@ -125,55 +127,66 @@ function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders
         });
         $scope.me.address = address;
         $scope.me.encrypted_wallet_key = JSON.stringify(privateKeyEnc);
+        $ionicLoading.show();
         Me.update($scope.me).$promise.then(function(res){
             $scope.me = res;
+            $ionicLoading.hide();
         },function(msg){
             alert(JSON.stringify(msg))
+            $ionicLoading.hide();
         })
     }
 
     $scope.bindWallet = function(){
         $scope.me.address = $scope.wallet.getChecksumAddressString();
         $scope.me.encrypted_wallet_key = JSON.stringify($scope.privateKeyEnc);
+        $ionicLoading.show();
         Me.update($scope.me).$promise.then(function(res){
             $scope.me = res;
+            $ionicLoading.hide();
         },function(msg){
             alert(JSON.stringify(msg))
+            $ionicLoading.hide();
         })
     }
 
     $scope.decryptWallet = function(password) {
+        $ionicLoading.show();
         Coinprice.get().$promise.then(function(res){
             $scope.advicedPrice = res.ethcny;
         },function(msg){
+            $ionicLoading.hide();
             alert(JSON.stringify(msg))
         });
 		$scope.addWalletStats = "";
         try {
             $scope.walletObj = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, password);
 		} catch (e) {
+            $ionicLoading.hide();
 			alert(e)
             return;
 		}
-
         web3Provider.init($scope.walletObj.getAddressString(),$scope.walletObj.getPrivateKeyString());
         window.mdc.balances($scope.walletObj.getAddressString()).then(function(res){
-            $scope.balance = ethUnits.toEther(res.toNumber(),'wei');
+            $scope.balance = res.toNumber()+"";
         })
         Ether.getBalance({'balance':$scope.walletObj.getAddressString(),'isClassic':true}).$promise.then(function(res){
             $scope.wallet = res.data;
             $scope.showWalletInfo = true;
+            $ionicLoading.hide();
         },function(msg){
             alert(JSON.stringify(msg));
+            $ionicLoading.hide();
         })
+        $scope.getOrder();
 	};
 
     $scope.recharge = function(joinPrice){
+        $ionicLoading.show();
         Me.get().$promise.then(function(me){
             Coinorders.add({},{'coin':joinPrice}).$promise.then(function(data){
-                console.log(data)
                 Coinordergetpayparams.add({'access_token':WXOauth.oauthData.access_token,'openid':WXOauth.oauthData.openid,'out_trade_no':data.out_trade_no},{}).$promise.then(function(wechatParams){
-                    console.log(wechatParams)
+                    $ionicLoading.hide();
                     var params = {
                         'appId':wechatParams.appId,
                         'nonceStr':wechatParams.nonceStr,
@@ -182,7 +195,6 @@ function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders
                         'signType':wechatParams.signType,
                         'timeStamp':wechatParams.timeStamp
                     }
-                    console.log(params)
                     var onBridgeReady = function(){
                        console.log("onBridgeReady")
                        WeixinJSBridge.invoke(
@@ -209,11 +221,14 @@ function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders
                     }
                 },function(msg){
                     alert(JSON.stringify(msg))
+                    $ionicLoading.hide();
                 })
             },function(msg){
                 alert(JSON.stringify(msg))
+                $ionicLoading.hide();
             });
         },function(err){
+            $ionicLoading.hide();
             Wechat.loginWechat(function(){
                 console.log('登录成功')
             },function(msg){

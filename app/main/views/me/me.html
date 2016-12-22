@@ -15,13 +15,13 @@
             <button class="button button-positive button-block" ng-click="decryptWallet(filePassword)">解锁</button>
         </div>
         <div class="list" ng-show="me.address&&me.encrypted_wallet_key&&showWalletInfo">
-            <div class="padding text-center">当前价格：1ETH ＝ {{advicedPrice}}RMB</div>
+            <div class="padding text-center">当前价格：1ETH 约为 {{advicedPrice}}RMB</div>
             <div class="padding-top padding-bottom">钱包地址：
                 <textarea class="form-control" type="text" readonly="readonly">{{wallet.address}}</textarea>
             </div>
-            <div class="padding-top padding-bottom">钱包余额：{{wallet.balance | weiToETH | number:3}} ETH = {{wallet.balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
-            <div class="padding-top padding-bottom">互助计划余额：{{balance | weiToETH | number:3}} ETH = {{balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
-            <div>订单记录</div>
+            <div class="padding-top padding-bottom">钱包余额：{{wallet.balance | weiToETH | number:2}} ETH ({{wallet.balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB) </div>
+            <div class="padding-top padding-bottom">互助计划余额：{{balance | weiToETH | number:2}} ETH ({{balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB) </div>
+            <div style="height:30px;">充值记录</div>
             <ul class="list" ng-repeat="order in orders.docs">
                 <li class="item">
                     地址：<div class="table-list">{{order.address}}</div>
@@ -33,7 +33,7 @@
                     创建时间：<div class="table-list">{{order.createdAt}}</div>
                 </li>
                 <li class="item">
-                    金额：<div class="table-list">{{order.coin}}ETH ＝{{order.price}}RMB</div>
+                    金额：<div class="table-list">{{order.coin}}ETH ({{order.price}}RMB)</div>
                 </li>
                 <li class="item">
                     订单状态：<div class="table-list">{{order.status | orderStatus}}</div>
@@ -43,7 +43,7 @@
               <a class="button" ng-click="preOrder()">上一页</a>
               <a class="button" ng-click="nextOrder()">下一页</a>
             </div>
-            <div>充值</div>
+            <div style="height:30px;">充值</div>
             <label class="item item-input">
                 <input type="number" placeholder="ETH个数" ng-model="eth">
             </label>

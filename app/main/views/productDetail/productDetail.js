@@ -1,6 +1,7 @@
 ionicApp.controller('productDetailCtrl', ['$scope','$state','Coinprice','tools','Me','Ether','web3Provider','ethFuncs',
-'ethUnits','Coinorders','Coinordergetpayparams','Wechat',
-function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,Coinorders,Coinordergetpayparams,Wechat){
+'ethUnits','Coinorders','Coinordergetpayparams','Wechat','$ionicLoading',
+function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
+    Coinorders,Coinordergetpayparams,Wechat,$ionicLoading){
     $scope.$on('$ionicView.beforeEnter', function(){
         if(!window.mdc)alert("请先解锁钱包")
         Coinprice.get().$promise.then(function(res){
@@ -88,12 +89,13 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,C
             alert("请填写身份证号");
             return;
         }
-
+        $ionicLoading.show();
         var id = tools.hexEncode($scope.data.id);
         $scope.data.noncestr = tools.noncestr($scope.$root.address);
         window.mdc.signUp($scope.data.recommender || "", $scope.data.name, $scope.data.country, id, $scope.data.noncestr, { from: $scope.$root.address, value: ethUnits.toWei(joinPrice,"ether"),'gasLimit':1000000,'gasPrice':20000000000}).then(function (transactionId) {
             console.log('Sign up transaction ID: ', '' + transactionId);
             Ether.getTransaction({'txId':transactionId,'isClassic':true}).$promise.then(function(res){
+                $ionicLoading.hide();
                 if(!res.data.transactionIndex&&res.data.transactionIndex!=0){
                     alert("正在处理，可能需要几分钟请稍等")
                     $state.go('app.tabs.product');
@@ -102,9 +104,11 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,C
                     $state.go('app.tabs.product');
                 }
             },function(err){
+                $ionicLoading.hide();
                 alert(err.message);
             });
         }).catch(function(error){
+            $ionicLoading.hide();
             if(error&&(error.message.indexOf("sender doesn't have enough funds to send tx")!=-1||
         error.message.indexOf("Account does not exist or account balance too low")!=-1)){
                 alert("钱包不存在或余额不足");
