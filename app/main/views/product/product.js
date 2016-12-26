@@ -3,56 +3,55 @@ ionicApp.controller('productCtrl', ['$scope','$state','Ether','ethFuncs','ethUni
 function($scope,$state,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice,
     Wallet,tools,Coinorders,Coinordergetpayparams,$ionicLoading){
     $scope.$on('$ionicView.beforeEnter', function(){
-        var getData = function(){
-            Ether.getBalance({'balance':window.MDC.address,'isClassic':true}).$promise.then(function(res){
-                $scope.totalBalance = res.data.balance;
-            });
-
-            Coinprice.get().$promise.then(function(res){
-                $scope.advicedPrice = res.ethcny;
-                joinPrice = 1;
-            },function(msg){
-                console.log(msg)
-                alert(JSON.stringify(msg))
-            });
-
-            window.mdc.totalAvailableUserAddresses().then(function(res){
-                $scope.totalPeople = res.toNumber();
-            })
-
-            window.mdc.balances($scope.$root.address).then(function(res){
-                $scope.balance = res.toNumber();
-            })
-        }
-
         if(!window.mdc){
-            Me.get().$promise.then(function(res){
-                $scope.me = res;
-                var wallet;
-                var str=prompt("请先解锁钱包","");
-                if(str){
-                    try {
-                        wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
-            		} catch (e) {
-            			alert(e)
-                        $state.go("app.tabs.me")
-            		}
-                    web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
-                    getData();
-                }else{
-                    $state.go("app.tabs.me")
-                }
+            Me.get().$promise.then(function(me){
+                $scope.me = me;
+                web3Provider.init($scope.me.address,'');
+                getData();
             },function(err){
-                Wechat.loginWechat(function(){
-                    console.log('登录成功')
-                },function(msg){
-                    console.log(msg)
-                });
+                web3Provider.init("","",true);
+                getData();
             })
         }else{
             getData();
         }
     });
+
+    var getData = function(){
+        Ether.getBalance({'balance':window.MDC.address,'isClassic':true}).$promise.then(function(res){
+            $scope.totalBalance = res.data.balance;
+        });
+
+        Coinprice.get().$promise.then(function(res){
+            $scope.advicedPrice = res.ethcny;
+            joinPrice = 1;
+        },function(msg){
+            console.log(msg)
+            alert(JSON.stringify(msg))
+        });
+
+        window.mdc.totalAvailableUserAddresses().then(function(res){
+            $scope.totalPeople = res.toNumber();
+        })
+
+        window.mdc.balances($scope.$root.address).then(function(res){
+            $scope.balance = res.toNumber();
+        })
+
+        window.mdc.infoHashes.call($scope.$root.address).then(function (res) {
+            var infoHash = "" + res[0];
+            var available = !!res[1];
+            if(available){
+                $scope.showRenewals = true;
+            }else if(window.web3.toDecimal(res[0])==0){
+                $scope.showRenewals = false;
+            }else{
+                $scope.showRenewals = true;
+            }
+        }).catch(function(err){
+
+        });
+    }
 
     $scope.views = {
         'assistance':false,
@@ -65,7 +64,7 @@ function($scope,$state,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice,
             var available = !!res[1];
             if(available){
                 alert('已加入')
-            }else if(window.web3.toDecimal(res[0])==0){
+            }else if(res[0]=="0x"||window.web3.toDecimal(res[0])==0){
                 alert('未加入')
             }else{
                 alert('余额不足，请续费')
@@ -132,7 +131,32 @@ function($scope,$state,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice,
         })
     }
     $scope.data = {};
+    var decryptWallet = function(){
+        if(!$scope.me||!$scope.me.encrypted_wallet_key){
+            $state.go("app.tabs.me");
+            return true;
+        }
+        if(window.mdc&&$scope.$root.address&&$scope.$root.privateKey){
+            return false;
+        }
+        var wallet;
+        var str=prompt("请先解锁钱包","");
+        if(str){
+            try {
+                wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
+            } catch (e) {
+                alert(e)
+                $state.go("app.tabs.me")
+            }
+            web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
+            return false;
+        }else{
+            $state.go("app.tabs.me")
+            return true;
+        }
+    }
     $scope.renewals = function(){
+        if(decryptWallet())true;
         if(joinPrice<0){
             alert("汇率获取失败");
             return;

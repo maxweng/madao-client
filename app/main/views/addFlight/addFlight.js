@@ -1,32 +1,13 @@
 ionicApp.controller('addFlightCtrl', ['$scope','$state','Ether','web3Provider','Wallet','Wechat','Me','$ionicLoading','tools',
 function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools){
     $scope.$on('$ionicView.beforeEnter', function(){
-        Me.get().$promise.then(function(res){
-            $scope.me = res;
-            if(!window.mdc){
-                var wallet;
-                var str=prompt("请先解锁钱包","");
-                if(str){
-                    try {
-                        wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
-                    } catch (e) {
-                        alert(e)
-                        $state.go("app.tabs.me")
-                    }
-                    web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
-                    $scope.get();
-                }else{
-                    $state.go("app.tabs.me")
-                }
-            }else{
-                $scope.get();
-            }
+        Me.get().$promise.then(function(me){
+            $scope.me = me;
+            if(!window.mdc)web3Provider.init($scope.me.address,'');
+            $scope.get();
         },function(err){
-            Wechat.loginWechat(function(){
-                console.log('登录成功')
-            },function(msg){
-                console.log(msg)
-            });
+            web3Provider.init("","",true);
+            $scope.get();
         })
     });
 
@@ -51,10 +32,22 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools){
                         "queryNo": transString(res[2]),
                         "claimed": transBool(res[3]),
                     };
-                    flights.push(flight);
-                    i++;
-                    work(i, work_cb);
+                    if(flight.claimed){
+                        window.mdc.claimIds(address,i+1).then(function(res1){
+                            window.mdc.claims(res1.toNumber()).then(function(res2){
+                                flight.claimStatus = transInt(res2[8]);
+                                flights.push(flight);
+                                i++;
+                                work(i, work_cb);
+                            });
+                        });
+                    }else{
+                        flights.push(flight);
+                        i++;
+                        work(i, work_cb);
+                    }
                 }).catch(function(err){
+                    $ionicLoading.hide();
                     console.log(err);
                 });
             }
@@ -62,6 +55,7 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools){
                 cb(flights);
             });
         }).catch(function(err){
+            $ionicLoading.hide();
             console.log(err);
         });
     }
@@ -77,11 +71,40 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools){
         })
     }
 
+    var decryptWallet = function(){
+        if(!$scope.me||!$scope.me.encrypted_wallet_key){
+            $state.go("app.tabs.me");
+            return true;
+        }
+        if(window.mdc&&$scope.$root.address&&$scope.$root.privateKey){
+            return false;
+        }
+        var wallet;
+        var str=prompt("请先解锁钱包","");
+        if(str){
+            try {
+                wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
+            } catch (e) {
+                alert(e)
+                $state.go("app.tabs.me")
+            }
+            web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
+            return false;
+        }else{
+            $state.go("app.tabs.me")
+            return true;
+        }
+    }
+
     $scope.add = function(){
+        if(decryptWallet())return;
+        var dateTime = Math.floor((new Date($scope.data.departureTime).getTime()/1000)/86400)*86400;
+        var nowTime = new Date().getTime()/1000+1800;
+
         if(!$scope.data.flightNumber||!$scope.data.departureTime){
             alert("请输入航班号和起飞时间");
             return;
-        }else if(!new Date($scope.data.departureTime) || new Date($scope.data.departureTime)<new Date()){
+        }else if(dateTime<=nowTime){
             alert("起飞时间不正确");
             return;
         }
@@ -117,6 +140,7 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools){
     }
 
     $scope.claim = function(id){
+        if(decryptWallet())return;
         $ionicLoading.show()
         window.mdc.infoHashes.call($scope.$root.address).then(function (res) {
             var infoHash = transString(res[0]);

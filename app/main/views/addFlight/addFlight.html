@@ -20,7 +20,7 @@
                 起飞时间：<div class="table-list">{{flight.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}～{{(flight.departureTime+86400)*1000 | date:'yyyy-MM-dd HH:mm'}}</div>
             </li>
             <li class="item text-center" ng-show="flight.claimed">
-                已申请理赔
+                {{flight.claimStatus | claimStatus}}
             </li>
             <li class="item" ng-hide="flight.claimed">
                 <button class="button button-positive button-block button-small" ng-click="claim(flight._id)">申请理赔</button>

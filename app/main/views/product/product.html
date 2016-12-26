@@ -26,7 +26,7 @@
                 <div class="col-50 column">
                     <img ng-src="{{ 'images/people.png' | staticSrc }}"></img>
                     <div class="box">
-                        <div class="title">有效参与人数</div>
+                        <div class="title">参与人数</div>
                         <div class="text">{{totalPeople}}</div>
                     </div>
                 </div>
@@ -79,10 +79,10 @@
     </ion-content>
     <ion-footer-bar class="mbs-footer">
         <div class="text-color-stable">同意 <span class="positive" ui-sref="app.provision"> 《 保障条款 》 </span></div>
-        <button class="button button-positive button-block" ui-sref="app.productDetail" ng-if="balance==0">
+        <button class="button button-positive button-block" ui-sref="app.productDetail" ng-if="!showRenewals">
             立即加入
         </button>
-        <button class="button button-positive button-block" ng-click="renewals()" ng-if="balance!=0">
+        <button class="button button-positive button-block" ng-click="renewals()" ng-if="showRenewals">
             续费(计划内余额{{balance | weiToETH | number:2}} ETH)
         </button>
     </ion-footer-bar>

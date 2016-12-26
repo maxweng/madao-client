@@ -2,30 +2,12 @@ ionicApp.controller('claimsCtrl', ['$scope','$state','Ether','Me','tools','web3P
 function($scope,$state,Ether,Me,tools,web3Provider,Wechat,Wallet,$ionicLoading){
     $scope.$on('$ionicView.beforeEnter', function(){
         Me.get().$promise.then(function(me){
-            if(!window.mdc){
-                var wallet;
-                var str=prompt("请先解锁钱包","");
-                if(str){
-                    try {
-                        wallet = Wallet.getWalletFromPrivKeyFile(me.encrypted_wallet_key, str);
-            		} catch (e) {
-            			alert(e)
-                        $state.go("app.tabs.me")
-            		}
-                    web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
-                    $scope.getClaims();
-                }else{
-                    $state.go("app.tabs.me")
-                }
-            }else{
-                $scope.getClaims()
-            }
+            $scope.me = me;
+            if(!window.mdc)web3Provider.init($scope.me.address,'');
+            $scope.getClaims();
         },function(err){
-            Wechat.loginWechat(function(){
-                console.log('登录成功')
-            },function(msg){
-                console.log(msg)
-            });
+            web3Provider.init("","",true);
+            $scope.getClaims();
         })
     });
 
@@ -93,7 +75,8 @@ function($scope,$state,Ether,Me,tools,web3Provider,Wechat,Wallet,$ionicLoading){
                 cb(claims);
             });
         }).catch(function(err){
-            alert(JSON.stringify(err))
+            console.log(err)
+            $ionicLoading.hide();
         })
     }
 

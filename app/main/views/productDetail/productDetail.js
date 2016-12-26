@@ -1,15 +1,37 @@
 ionicApp.controller('productDetailCtrl', ['$scope','$state','Coinprice','tools','Me','Ether','web3Provider','ethFuncs',
-'ethUnits','Coinorders','Coinordergetpayparams','Wechat','$ionicLoading',
+'ethUnits','Coinorders','Coinordergetpayparams','Wechat','$ionicLoading','Wallet',
 function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
-    Coinorders,Coinordergetpayparams,Wechat,$ionicLoading){
+    Coinorders,Coinordergetpayparams,Wechat,$ionicLoading,Wallet){
     $scope.$on('$ionicView.beforeEnter', function(){
-        if(!window.mdc)alert("请先解锁钱包")
-        Coinprice.get().$promise.then(function(res){
-            $scope.advicedPrice = res.ethcny;
-            joinPrice = 1;
-        },function(msg){
-            alert(JSON.stringify(msg))
-        });
+        Me.get().$promise.then(function(me){
+            $scope.me = me;
+            if(!$scope.me.encrypted_wallet_key)$state.go("app.tabs.me");
+            if(window.mdc&&$scope.$root.address&&$scope.$root.privateKey){
+
+            }else{
+                var wallet;
+                var str=prompt("请先解锁钱包","");
+                if(str){
+                    try {
+                        wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
+                    } catch (e) {
+                        alert(e)
+                        $state.go("app.tabs.me")
+                    }
+                    web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
+                }else{
+                    $state.go("app.tabs.me")
+                }
+            }
+            Coinprice.get().$promise.then(function(res){
+                $scope.advicedPrice = res.ethcny;
+                joinPrice = 1;
+            },function(msg){
+                alert(JSON.stringify(msg))
+            });
+        },function(err){
+            $state.go("app.tabs.me");
+        })
     });
     var joinPrice = -1;
     $scope.data = {};

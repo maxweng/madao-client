@@ -124,5 +124,5 @@ function ($stateProvider, $urlRouterProvider, $httpProvider) {
             }
         })
         ;
-    $urlRouterProvider.otherwise('/app/tabs/me');
+    $urlRouterProvider.otherwise('/app/tabs/product');
 }]);

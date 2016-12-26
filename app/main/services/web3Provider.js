@@ -13,12 +13,10 @@ function($rootScope,APP_CONFIG){
     }
 
     return {
-        init: function(userAddress,userkey){
+        init: function(userAddress,userkey,noSigner){
             // userAddress = '0xb57be5149842f218a95da90599ba2b7a70f888e7';
             // userkey = 'a8d9edff20ef6fd7000f43ec103904bdc173ea55e1008413dcb744d4bf016590';
-            if (typeof window.web3 !== "undefined") {
-                window.web3 = new Web3(window.web3.currentProvider);
-            }else{
+
                 $rootScope.address = userAddress;
                 $rootScope.privateKey = userkey;
                 var transaction_signer = {
@@ -39,11 +37,17 @@ function($rootScope,APP_CONFIG){
                         callback(null, serializedTx.toString('hex'));
                     }
                 };
-                var provider = new window.MBSProvider(APP_CONFIG.host+"/api",userkey,transaction_signer)
+                var provider
+                if(noSigner){
+                    provider = new window.MBSProvider(APP_CONFIG.host+"/api",userkey)
+                }else{
+                    provider = new window.MBSProvider(APP_CONFIG.host+"/api",userkey,transaction_signer)
+                }
+
                 window.web3 = new Web3(provider);
                 web3.eth.defaultAccount = userAddress;
-            }
-            window.MDC.setNetwork(APP_CONFIG.host=="/api"?"default":"3");
+
+            window.MDC.setNetwork("3");
             window.MDC.setProvider(window.web3.currentProvider);
             window.mdc = window.MDC.deployed();
         }
