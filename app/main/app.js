@@ -105,6 +105,14 @@ function ($stateProvider, $urlRouterProvider, $httpProvider) {
                 }
             }
         })
+        .state('app.process', {
+            url: '/process',
+            views: {
+                menuContent: {
+                    templateUrl: 'templates/process.html'
+                }
+            }
+        })
         .state('app.productDetail', {
             url: '/productDetail',
             views: {

@@ -6,7 +6,7 @@ function($resource, $q){
         add: {
             method: 'POST',
             url: '/api/coinordergetpayparams',
-            timeout: 8000,
+            timeout: 30000,
             interceptor: {
                 responseError: function(responseError){
                     return $q.reject(responseError);

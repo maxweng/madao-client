@@ -82,7 +82,7 @@ function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders
         Coinprice.get().$promise.then(function(res){
             $scope.advicedPrice = res.ethcny;
         },function(msg){
-            alert(JSON.stringify(msg))
+            alert("获取ETH和RMB汇率失败")
         });
     }
 
@@ -156,7 +156,7 @@ function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders
             $scope.advicedPrice = res.ethcny;
         },function(msg){
             $ionicLoading.hide();
-            alert(JSON.stringify(msg))
+            alert("获取ETH和RMB汇率失败")
         });
 		$scope.addWalletStats = "";
         try {

@@ -27,7 +27,7 @@ function($scope,$state,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice,
             joinPrice = 1;
         },function(msg){
             console.log(msg)
-            alert(JSON.stringify(msg))
+            alert("获取ETH和RMB汇率失败")
         });
 
         window.mdc.totalAvailableUserAddresses().then(function(res){

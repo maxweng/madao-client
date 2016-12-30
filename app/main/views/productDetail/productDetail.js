@@ -27,10 +27,10 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
                 $scope.advicedPrice = res.ethcny;
                 joinPrice = 1;
             },function(msg){
-                alert(JSON.stringify(msg))
+                alert("获取ETH和RMB汇率失败")
             });
         },function(err){
-            $state.go("app.tabs.me");
+            //$state.go("app.tabs.me");
         })
     });
     var joinPrice = -1;

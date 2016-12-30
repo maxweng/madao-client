@@ -8,7 +8,7 @@ function($resource, $q,$window,$rootScope){
         wechat_login: {
             method: 'POST',
             url: '/api/wechatlogin',
-            timeout: 8000,
+            timeout: 30000,
             interceptor: {
                 responseError: function(responseError){
                     return $q.reject(responseError);

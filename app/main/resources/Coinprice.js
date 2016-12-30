@@ -6,7 +6,7 @@ function($resource, $q){
         get: {
             method: 'GET',
             url: '/api/coinprice',
-            timeout: 8000,
+            timeout: 30000,
             interceptor: {
                 responseError: function(responseError){
                     return $q.reject(responseError);

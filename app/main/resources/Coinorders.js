@@ -5,7 +5,7 @@ function($resource, $q){
         get: {
             method: 'GET',
             url: '/api/coinorders',
-            timeout: 8000,
+            timeout: 30000,
             interceptor: {
                 responseError: function(responseError){
                     return $q.reject(responseError);
@@ -15,7 +15,7 @@ function($resource, $q){
         add: {
             method: 'POST',
             url: '/api/coinorders',
-            timeout: 8000,
+            timeout: 30000,
             interceptor: {
                 responseError: function(responseError){
                     return $q.reject(responseError);
