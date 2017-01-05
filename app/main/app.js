@@ -11,7 +11,8 @@ window.HookedWeb3Provider = require('hooked-web3-provider');
 window.MBSProvider = require('./MBSProvider.js');
 
 window.ionicApp = angular.module('madaoClient', ['ionic', 'ui.router','ngResource'])
-.run(['Wechat','Me',function (Wechat,Me) {
+.run(['$rootScope','Wechat','Me','LANGUAGE','APP_CONFIG',function ($rootScope,Wechat,Me,LANGUAGE,APP_CONFIG) {
+    $rootScope.language = LANGUAGE[APP_CONFIG.language];
     // Me.get().$promise.then(function(me){
     //
     // },function(err){
@@ -67,6 +68,15 @@ function ($stateProvider, $urlRouterProvider, $httpProvider) {
                 tabContent: {
                     templateUrl: 'templates/me.html',
                     controller: 'meCtrl'
+                }
+            }
+        })
+        .state('app.tabs.myHome', {
+            url: '/myHome',
+            views: {
+                tabContent: {
+                    templateUrl: 'templates/myHome.html',
+                    controller: 'myHomeCtrl'
                 }
             }
         })

@@ -1,9 +1,9 @@
-<ion-view>
+<ion-view hide-nav-bar="true">
     <ion-nav-title>航空意外互助计划</ion-nav-title>
     <ion-nav-buttons side="right">
         <button class="button button-clear" ng-click="viewStatus()">查看</button>
     </ion-nav-buttons>
-    <ion-content class="product background-gray has-footer">
+    <ion-content class="product has-footer">
         <img width="100%" ng-src="{{ 'images/banner.png' | staticSrc }}">
         <div class="background-white padding">
             <div class="border-bottom">
@@ -19,23 +19,23 @@
                 <div class="col-50 border-right column">
                     <img ng-src="{{ 'images/wallet.png' | staticSrc }}"></img>
                     <div class="box">
-                        <div class="title">总金额</div>
+                        <div class="title">{{language.fund}}</div>
                         <div class="text">{{totalBalance | weiToRMB:advicedPrice | currency:'￥':2}}</div>
                     </div>
                 </div>
                 <div class="col-50 column">
                     <img ng-src="{{ 'images/people.png' | staticSrc }}"></img>
                     <div class="box">
-                        <div class="title">参与人数</div>
+                        <div class="title">{{language.members}}</div>
                         <div class="text">{{totalPeople}}</div>
                     </div>
                 </div>
             </div>
-            <div class="text-center font-large" style="margin: 20px 0px 10px;">
+            <!-- <div class="text-center font-large" style="margin: 20px 0px 10px;">
                 会费 <span class="energized"> {{advicedPrice}} </span> 元
-            </div>
+            </div> -->
         </div>
-        <div class="background-white margin-top-20" style="padding:0 10px;">
+        <!-- <div class="background-white margin-top-20" style="padding:0 10px;">
             <ion-list>
                <div class="border-bottom">
                  <ion-item ui-sref="app.process">
@@ -52,15 +52,16 @@
                   </ion-item>
                 </div>
              </ion-list>
-        </div>
+        </div> -->
     </ion-content>
     <ion-footer-bar class="mbs-footer">
-        <div class="text-color-stable">同意 <span class="positive" ui-sref="app.provision"> 《 保障条款 》 </span></div>
-        <button class="button button-positive button-block" ui-sref="app.productDetail" ng-if="!showRenewals">
-            立即加入
+        <!-- <div class="text-color-stable">同意 <span class="positive" ui-sref="app.provision"> 《 保障条款 》 </span></div> -->
+        <span style="font-size: 20px;line-height: 40px;padding-left: 18px;">{{language.sr}} {{advicedPrice}}</span>
+        <button class="button button-positive pull-right" ui-sref="app.productDetail" ng-if="!showRenewals">
+            {{language.join}}
         </button>
-        <button class="button button-positive button-block" ng-click="renewals()" ng-if="showRenewals">
-            续费(计划内余额{{balance | weiToETH | number:2}} ETH)
+        <button class="button button-positive pull-right" ng-click="renewals()" ng-if="showRenewals">
+            {{language.renewals}}({{language.balance}}{{balance | weiToETH | number:2}} ETH)
         </button>
     </ion-footer-bar>
 </ion-view>

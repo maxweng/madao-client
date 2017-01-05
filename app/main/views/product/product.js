@@ -1,8 +1,11 @@
 ionicApp.controller('productCtrl', ['$scope','$state','Ether','ethFuncs','ethUnits',
-'Wechat','Me','web3Provider','Coinprice','Wallet','tools','Coinorders','Coinordergetpayparams','$ionicLoading',
+'Wechat','Me','web3Provider','Coinprice','Wallet','tools','Coinorders','Coinordergetpayparams','$ionicLoading','walletManage',
 function($scope,$state,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice,
-    Wallet,tools,Coinorders,Coinordergetpayparams,$ionicLoading){
+    Wallet,tools,Coinorders,Coinordergetpayparams,$ionicLoading,walletManage){
     $scope.$on('$ionicView.beforeEnter', function(){
+        walletManage($scope, function(modal){
+            $scope.modal = modal;
+        });
         if(!window.mdc){
             Me.get().$promise.then(function(me){
                 $scope.me = me;
@@ -133,7 +136,7 @@ function($scope,$state,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice,
     $scope.data = {};
     var decryptWallet = function(){
         if(!$scope.me||!$scope.me.encrypted_wallet_key){
-            $state.go("app.tabs.me");
+            $scope.modal.showModal();
             return true;
         }
         if(window.mdc&&$scope.$root.address&&$scope.$root.privateKey){

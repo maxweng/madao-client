@@ -1,37 +1,40 @@
 ionicApp.controller('productDetailCtrl', ['$scope','$state','Coinprice','tools','Me','Ether','web3Provider','ethFuncs',
-'ethUnits','Coinorders','Coinordergetpayparams','Wechat','$ionicLoading','Wallet',
+'ethUnits','Coinorders','Coinordergetpayparams','Wechat','$ionicLoading','Wallet','walletManage',
 function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
-    Coinorders,Coinordergetpayparams,Wechat,$ionicLoading,Wallet){
+    Coinorders,Coinordergetpayparams,Wechat,$ionicLoading,Wallet,walletManage){
     $scope.$on('$ionicView.beforeEnter', function(){
-        Me.get().$promise.then(function(me){
-            $scope.me = me;
-            if(!$scope.me.encrypted_wallet_key)$state.go("app.tabs.me");
-            if(window.mdc&&$scope.$root.address&&$scope.$root.privateKey){
+        walletManage($scope, function(modal){
+            $scope.modal = modal;
+            Me.get().$promise.then(function(me){
+                $scope.me = me;
+                if(!$scope.me.encrypted_wallet_key)$scope.modal.showModal();
+                if(window.mdc&&$scope.$root.address&&$scope.$root.privateKey){
 
-            }else{
-                var wallet;
-                var str=prompt("请先解锁钱包","");
-                if(str){
-                    try {
-                        wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
-                    } catch (e) {
-                        alert(e)
+                }else{
+                    var wallet;
+                    var str=prompt("请先解锁钱包","");
+                    if(str){
+                        try {
+                            wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
+                        } catch (e) {
+                            alert(e)
+                            $state.go("app.tabs.me")
+                        }
+                        web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
+                    }else{
                         $state.go("app.tabs.me")
                     }
-                    web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
-                }else{
-                    $state.go("app.tabs.me")
                 }
-            }
-            Coinprice.get().$promise.then(function(res){
-                $scope.advicedPrice = res.ethcny;
-                joinPrice = 1;
-            },function(msg){
-                alert("获取ETH和RMB汇率失败")
-            });
-        },function(err){
-            //$state.go("app.tabs.me");
-        })
+                Coinprice.get().$promise.then(function(res){
+                    $scope.advicedPrice = res.ethcny;
+                    joinPrice = 1;
+                },function(msg){
+                    alert("获取ETH和RMB汇率失败")
+                });
+            },function(err){
+                $scope.modal.showModal();
+            })
+        });
     });
     var joinPrice = -1;
     $scope.data = {};

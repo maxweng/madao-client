@@ -1,29 +1,29 @@
-<ion-view>
+<ion-view hide-nav-bar="true">
     <ion-nav-title>理赔</ion-nav-title>
     <ion-content class="background-gray padding">
-        <ion-refresher pulling-text="下拉刷新" on-refresh="getClaims()">
+        <ion-refresher pulling-text="{{language.pullDownToRefresh}}" on-refresh="getClaims()">
         </ion-refresher>
         <ul class="list" ng-repeat="claim in claims" style="margin-bottom:10px;">
             <li class="item">
-                姓名：<div class="table-list">{{claim.claimerName}}</div>
+                {{language.name}}：<div class="table-list">{{claim.claimerName}}</div>
             </li>
             <li class="item">
-                国籍：<div class="table-list">{{claim.claimerCountry}}</div>
+                {{language.nationality}}：<div class="table-list">{{claim.claimerCountry}}</div>
             </li>
             <li class="item">
-                身份证号：<div class="table-list">{{claim.claimerId}}</div>
+                {{language.id}}：<div class="table-list">{{claim.claimerId}}</div>
             </li>
             <li class="item">
-                航班号：<div class="table-list">{{claim.flightNumber}}</div>
+                {{language.flightNumber}}：<div class="table-list">{{claim.flightNumber}}</div>
             </li>
             <li class="item">
-                起飞时间：<div class="table-list">{{claim.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}</div>
+                {{language.departureTime}}：<div class="table-list">{{claim.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}</div>
             </li>
             <li class="item">
-                编号：<div class="table-list">{{claim.oracleItId}}</div>
+                {{language.no}}：<div class="table-list">{{claim.oracleItId}}</div>
             </li>
             <li class="item">
-                申请状态：<div class="table-list">{{claim.status | claimStatus}}</div>
+                {{language.applicationStatus}}：<div class="table-list">{{claim.status | claimStatus}}</div>
             </li>
         </ul>
     </ion-content>

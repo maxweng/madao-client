@@ -1,29 +1,29 @@
-<ion-view>
+<ion-view hide-nav-bar="true">
     <ion-nav-title>登记</ion-nav-title>
     <ion-content class="background-gray padding">
-        <ion-refresher pulling-text="下拉刷新" on-refresh="get()">
+        <ion-refresher pulling-text="{{language.pullDownToRefresh}}" on-refresh="get()">
         </ion-refresher>
         <label class="item item-input">
-            <span class="input-label">航班号</span>
-            <input type="text" class="text-right" placeholder="请输入" ng-model="data.flightNumber">
+            <span class="input-label">{{language.flightNumber}}</span>
+            <input type="text" class="text-right" placeholder="{{language.defaultPlaceholder}}" ng-model="data.flightNumber">
         </label>
         <label class="item item-input">
-            <span class="input-label">起飞时间</span>
+            <span class="input-label">{{language.departureTime}}</span>
             <input type="datetime-local" class="text-right" ng-model="data.departureTime">
         </label>
-        <button class="button button-positive button-block" ng-click="add()">点我登记</button>
+        <button class="button button-positive button-block" ng-click="add()">{{language.addFlight}}</button>
         <ul class="list" ng-repeat="flight in flights" style="margin-bottom:10px;">
             <li class="item">
-                航班号：<div class="table-list">{{flight.flightNumber}}</div>
+                {{language.flightNumber}}：<div class="table-list">{{flight.flightNumber}}</div>
             </li>
             <li class="item">
-                起飞时间：<div class="table-list">{{flight.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}～{{(flight.departureTime+86400)*1000 | date:'yyyy-MM-dd HH:mm'}}</div>
+                {{language.departureTime}}：<div class="table-list">{{flight.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}～{{(flight.departureTime+86400)*1000 | date:'yyyy-MM-dd HH:mm'}}</div>
             </li>
             <li class="item text-center" ng-show="flight.claimed">
                 {{flight.claimStatus | claimStatus}}
             </li>
             <li class="item" ng-hide="flight.claimed">
-                <button class="button button-positive button-block button-small" ng-click="claim(flight._id)">申请理赔</button>
+                <button class="button button-positive button-block button-small" ng-click="claim(flight._id)">{{language.applicationClaims}}</button>
             </li>
         </ul>
     </ion-content>

@@ -1,5 +1,5 @@
-ionicApp.controller('addFlightCtrl', ['$scope','$state','Ether','web3Provider','Wallet','Wechat','Me','$ionicLoading','tools',
-function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools){
+ionicApp.controller('addFlightCtrl', ['$scope','$state','Ether','web3Provider','Wallet','Wechat','Me','$ionicLoading','tools','walletManage',
+function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,walletManage){
     $scope.$on('$ionicView.beforeEnter', function(){
         Me.get().$promise.then(function(me){
             $scope.me = me;
@@ -73,7 +73,7 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools){
 
     var decryptWallet = function(){
         if(!$scope.me||!$scope.me.encrypted_wallet_key){
-            $state.go("app.tabs.me");
+            $scope.modal.showModal();
             return true;
         }
         if(window.mdc&&$scope.$root.address&&$scope.$root.privateKey){

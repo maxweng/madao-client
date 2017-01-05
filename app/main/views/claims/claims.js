@@ -1,6 +1,9 @@
-ionicApp.controller('claimsCtrl', ['$scope','$state','Ether','Me','tools','web3Provider','Wechat','Wallet','$ionicLoading',
-function($scope,$state,Ether,Me,tools,web3Provider,Wechat,Wallet,$ionicLoading){
+ionicApp.controller('claimsCtrl', ['$scope','$state','Ether','Me','tools','web3Provider','Wechat','Wallet','$ionicLoading','walletManage',
+function($scope,$state,Ether,Me,tools,web3Provider,Wechat,Wallet,$ionicLoading,walletManage){
     $scope.$on('$ionicView.beforeEnter', function(){
+        walletManage($scope, function(modal){
+            $scope.modal = modal;
+        });
         Me.get().$promise.then(function(me){
             $scope.me = me;
             if(!window.mdc)web3Provider.init($scope.me.address,'');

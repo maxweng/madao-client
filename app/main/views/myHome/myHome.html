@@ -1,0 +1,39 @@
+<ion-view hide-nav-bar="true">
+    <ion-content class="myHome">
+        <div class="bg">
+            <div class="text-center">
+                <div class="header-box"><div class="header" ng-style="me.header | staticBackground: 'small'"></div></div>
+                <div class="title">{{me.nickname}}</div>
+                <div class="sub-title">{{language.balance}}：{{(balance | weiToETH | number:2)*advicedPrice | number:2}}</div>
+            </div>
+        </div>
+        <ul class="list">
+            <li class="item">
+                {{language.nationality}}
+                <span class="item-note">
+                  {{me.country}}
+                </span>
+            </li>
+            <li class="item">
+                {{language.id}}
+                <span class="item-note">
+                  {{me.id_no}}
+                </span>
+            </li>
+            <li class="item item-icon-right">
+                {{language.flight}}
+                <span class="item-note">
+
+                </span>
+                <i class="icon ion-chevron-right"></i>
+            </li>
+            <li class="item item-icon-right">
+                {{language.wallet}}
+                <span class="item-note">
+                  {{walletBalance*advicedPrice | number:2}}
+                </span>
+                <i class="icon ion-chevron-right"></i>
+            </li>
+        </ul>
+    </ion-content>
+</ion-view>
