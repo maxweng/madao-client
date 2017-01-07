@@ -17,17 +17,15 @@
             </div>
             <div class="row columns border-bottom">
                 <div class="col-50 border-right column">
-                    <img ng-src="{{ 'images/wallet.png' | staticSrc }}"></img>
                     <div class="box">
+                        <div class="text">{{totalBalance | weiToRMB:advicedPrice | currency:2}}</div>
                         <div class="title">{{language.fund}}</div>
-                        <div class="text">{{totalBalance | weiToRMB:advicedPrice | currency:'￥':2}}</div>
                     </div>
                 </div>
                 <div class="col-50 column">
-                    <img ng-src="{{ 'images/people.png' | staticSrc }}"></img>
                     <div class="box">
-                        <div class="title">{{language.members}}</div>
                         <div class="text">{{totalPeople}}</div>
+                        <div class="title">{{language.members}}</div>
                     </div>
                 </div>
             </div>
