@@ -146,7 +146,7 @@ function($scope,$state,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice,
             $ionicPopup.prompt({
                 title: $scope.$root.language.tip10,
                 inputType: 'password',
-                okText: $scope.$root.language.save,
+                okText: $scope.$root.language.ok,
                 cancelText: $scope.$root.language.cancel
             }).then(function(str){
                 if(str){

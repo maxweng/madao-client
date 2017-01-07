@@ -5,6 +5,7 @@ ionicApp
         'importWallet': 'Import Wallet',
         'createWallet': 'Create Wallet',
         'save': 'Save',
+        'ok': 'OK',
         'cancel': 'Cancel',
         'fund':'Fund',
         'members':'Members',
@@ -104,6 +105,7 @@ ionicApp
     'ch':{
         'importWallet': '导入钱包',
         'createWallet': '创建钱包',
+        'ok': '确定',
         'save': '保存',
         'cancel': '取消',
         'fund':'总金额',
