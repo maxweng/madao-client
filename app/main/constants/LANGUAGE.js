@@ -93,7 +93,7 @@ ionicApp
         'errMsg16':'Account balance is too low',
         'errMsg17':'Account balance is too low',
         'errMsg18':'Wrong Password',
-        'tipMsg1':'Thank you for joining!',
+        'tipMsg1':'Transaction sent.',
         'tipMsg2':'The registration is successful',
         'tipMsg3':'Successful application',
         'tipMsg4':'login successful',
