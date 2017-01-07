@@ -19,15 +19,6 @@ function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders
                 });
             })
         })
-        if(Wechat.hasAccessToken()){
-            $timeout(function(){
-                Me.get().$promise.then(function(res){
-                    $scope.me = res;
-                },function(err){
-
-                })
-            },2000)
-        }
     });
 
     $scope.password = "";

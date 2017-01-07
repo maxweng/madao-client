@@ -1,41 +1,55 @@
 ionicApp.controller('productDetailCtrl', ['$scope','$state','Coinprice','tools','Me','Ether','web3Provider','ethFuncs',
-'ethUnits','Coinorders','Coinordergetpayparams','Wechat','$ionicLoading','Wallet','walletManage',
+'ethUnits','Coinorders','Coinordergetpayparams','Wechat','$ionicLoading','Wallet','walletManage','APP_CONFIG',
 function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
-    Coinorders,Coinordergetpayparams,Wechat,$ionicLoading,Wallet,walletManage){
+    Coinorders,Coinordergetpayparams,Wechat,$ionicLoading,Wallet,walletManage,APP_CONFIG){
     $scope.$on('$ionicView.beforeEnter', function(){
+        if(!Wechat.hasAccessToken())Wechat.getAccessToken();
         walletManage($scope, function(modal){
             $scope.modal = modal;
             Me.get().$promise.then(function(me){
                 $scope.me = me;
-                if(!$scope.me.encrypted_wallet_key)$scope.modal.showModal();
-                if(window.mdc&&$scope.$root.address&&$scope.$root.privateKey){
-
+                if(!$scope.me.encrypted_wallet_key){
+                    $scope.modal.showModal();
                 }else{
-                    var wallet;
-                    var str=prompt("请先解锁钱包","");
-                    if(str){
-                        try {
-                            wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
-                        } catch (e) {
-                            alert(e)
-                            $state.go("app.tabs.me")
-                        }
-                        web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
+                    if(window.mdc&&$scope.$root.address&&$scope.$root.privateKey){
+
                     }else{
-                        $state.go("app.tabs.me")
+                        var wallet;
+                        var str=prompt($scope.$root.language.tip10,"");
+                        if(str){
+                            try {
+                                wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
+                            } catch (e) {
+                                $scope.modal.showModal();
+                                return
+                            }
+                            web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
+                        }else{
+                            $scope.modal.showModal();
+                            return
+                        }
                     }
                 }
                 Coinprice.get().$promise.then(function(res){
                     $scope.advicedPrice = res.ethcny;
                     joinPrice = 1;
                 },function(msg){
-                    alert("获取ETH和RMB汇率失败")
+                    // alert($scope.$root.language.errMsg7)
                 });
             },function(err){
                 $scope.modal.showModal();
             })
         });
     });
+
+    $scope.provision = function(){
+        if(APP_CONFIG.language == 'en'){
+            $state.go('app.provisionEn');
+        }else{
+            $state.go('app.provision');
+        }
+    }
+
     var joinPrice = -1;
     $scope.data = {};
 
@@ -64,10 +78,10 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
                            'getBrandWCPayRequest', params, function(res){
                                console.log("onBridgeReadyResult")
                                if(res.err_msg == "get_brand_wcpay_request:ok" ) {
-                                   alert("支付成功");
+                                   alert($scope.$root.language.tipMsg6);
                                    $scope.join();
                                }else{
-                                   alert("支付失败");
+                                   alert($scope.$root.language.errMsg11);
                                }
                            }
                        );
@@ -90,7 +104,7 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
             });
         },function(err){
             Wechat.loginWechat(function(){
-                console.log('登录成功')
+                console.log($scope.$root.language.tipMsg4)
             },function(msg){
                 console.log(msg)
             });
@@ -99,19 +113,19 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
 
     $scope.join = function(){
         if(joinPrice<0){
-            alert("汇率获取失败");
+            alert($scope.$root.language.errMsg7);
             return;
         }
         if(!$scope.data.name){
-            alert("请填写姓名");
+            alert($scope.$root.language.errMsg12);
             return;
         }
         if(!$scope.data.country){
-            alert("请填写国籍");
+            alert($scope.$root.language.errMsg13);
             return;
         }
         if(!$scope.data.id){
-            alert("请填写身份证号");
+            alert($scope.$root.language.errMsg14);
             return;
         }
         $ionicLoading.show();
@@ -122,10 +136,10 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
             Ether.getTransaction({'txId':transactionId,'isClassic':true}).$promise.then(function(res){
                 $ionicLoading.hide();
                 if(!res.data.transactionIndex&&res.data.transactionIndex!=0){
-                    alert("正在处理，可能需要几分钟请稍等")
+                    alert($scope.$root.language.tipMsg1)
                     $state.go('app.tabs.product');
                 }else{
-                    alert("加入成功")
+                    alert($scope.$root.language.tipMsg8)
                     $state.go('app.tabs.product');
                 }
             },function(err){
@@ -136,11 +150,11 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
             $ionicLoading.hide();
             if(error&&(error.message.indexOf("sender doesn't have enough funds to send tx")!=-1||
         error.message.indexOf("Account does not exist or account balance too low")!=-1)){
-                alert("钱包不存在或余额不足");
+                alert($scope.$root.language.errMsg16);
                 bayCoin(joinPrice);
             }else{
                 console.log(error)
-                alert("请求失败");
+                alert($scope.$root.language.errMsg15);
             }
         });
 

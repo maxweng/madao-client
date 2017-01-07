@@ -80,7 +80,7 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,w
             return false;
         }
         var wallet;
-        var str=prompt("请先解锁钱包","");
+        var str=prompt($scope.$root.language.tip10,"");
         if(str){
             try {
                 wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
@@ -102,10 +102,10 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,w
         var nowTime = new Date().getTime()/1000+1800;
 
         if(!$scope.data.flightNumber||!$scope.data.departureTime){
-            alert("请输入航班号和起飞时间");
+            alert($scope.$root.language.errMsg1);
             return;
         }else if(dateTime<=nowTime){
-            alert("起飞时间不正确");
+            alert($scope.$root.language.errMsg2);
             return;
         }
         var userFlight = {
@@ -123,9 +123,9 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,w
             Ether.getTransaction({'txId':transactionId,'isClassic':true}).$promise.then(function(res){
                 $ionicLoading.hide();
                 if(!res.data.transactionIndex&&res.data.transactionIndex!=0){
-                    alert("正在处理，可能需要几分钟请稍等")
+                    alert($scope.$root.language.tipMsg1)
                 }else{
-                    alert("登记成功")
+                    alert($scope.$root.language.tipMsg2)
                 }
                 $scope.get()
             },function(err){
@@ -134,7 +134,7 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,w
             });
         }).catch(function(err){
             $ionicLoading.hide();
-            alert('登记失败');
+            alert($scope.$root.language.errMsg3);
             console.log(err);
         });
     }
@@ -152,9 +152,9 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,w
                         $ionicLoading.hide();
                         console.log(res);
                         if(!res.data.transactionIndex&&res.data.transactionIndex!=0){
-                            alert("正在处理，可能需要几分钟请稍等")
+                            alert($scope.$root.language.tipMsg1)
                         }else{
-                            alert("申请成功")
+                            alert($scope.$root.language.tipMsg3)
                         }
                         $scope.get();
                     },function(err){
@@ -164,16 +164,16 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,w
                 }).catch(function(err){
                     $ionicLoading.hide();
                     console.log(err);
-                    alert("申请失败")
+                    alert($scope.$root.language.errMsg4)
                 });
             }else{
                 $ionicLoading.hide();
-                alert('没有理赔资格')
+                alert($scope.$root.language.errMsg5)
             }
         }).catch(function(err){
             $ionicLoading.hide();
             console.log(err);
-            alert('获取用户信息失败')
+            alert($scope.$root.language.errMsg6)
         });
     }
 }])

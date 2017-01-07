@@ -1,9 +1,25 @@
 <ion-view hide-nav-bar="true">
     <ion-nav-title>登记</ion-nav-title>
-    <ion-content class="background-gray padding">
+    <ion-content class="padding">
         <ion-refresher pulling-text="{{language.pullDownToRefresh}}" on-refresh="get()">
         </ion-refresher>
-        <label class="item item-input">
+        <ul class="list"  style="margin-bottom:10px;" ng-repeat="flight in flights" style="margin-bottom:10px;">
+            <li class="item" style="background: rgba(174,220,247,0.45);padding: 29px 16px;">
+                {{language.flightNumber}} <div class="table-list">{{flight.flightNumber}}</div>
+                <i class="ion ion-plane" style="color: #8CCCF2;font-size: 40px;position: absolute;right: 20px;top: 20px;"></i>
+            </li>
+            <li class="item" style="padding: 19px 16px;">
+                <div>{{language.arrivesTime}} <span style="padding-left: 124px;">{{language.arrivesTime}}</span></div>
+                <div class="table-list" style="width: 100%;">{{flight.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}<i class="ion ion-plane" style="color: #8CCCF2;font-size: 20px;margin: 0 15px;"></i>{{(flight.departureTime+86400)*1000 | date:'yyyy-MM-dd HH:mm'}}</div>
+            </li>
+            <li class="item text-center" ng-show="flight.claimed">
+                {{flight.claimStatus | claimStatus}}
+            </li>
+            <li class="item text-center" ng-hide="flight.claimed">
+                <button class="button button-positive" style="padding: 0 50px;" ng-click="claim(flight._id)">{{language.applicationClaims}}</button>
+            </li>
+        </ul>
+        <label class="item item-input" style="background: rgba(174,220,247,0.45);">
             <span class="input-label">{{language.flightNumber}}</span>
             <input type="text" class="text-right" placeholder="{{language.defaultPlaceholder}}" ng-model="data.flightNumber">
         </label>
@@ -12,19 +28,5 @@
             <input type="datetime-local" class="text-right" ng-model="data.departureTime">
         </label>
         <button class="button button-positive button-block" ng-click="add()">{{language.addFlight}}</button>
-        <ul class="list" ng-repeat="flight in flights" style="margin-bottom:10px;">
-            <li class="item">
-                {{language.flightNumber}}：<div class="table-list">{{flight.flightNumber}}</div>
-            </li>
-            <li class="item">
-                {{language.departureTime}}：<div class="table-list">{{flight.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}～{{(flight.departureTime+86400)*1000 | date:'yyyy-MM-dd HH:mm'}}</div>
-            </li>
-            <li class="item text-center" ng-show="flight.claimed">
-                {{flight.claimStatus | claimStatus}}
-            </li>
-            <li class="item" ng-hide="flight.claimed">
-                <button class="button button-positive button-block button-small" ng-click="claim(flight._id)">{{language.applicationClaims}}</button>
-            </li>
-        </ul>
     </ion-content>
 </ion-view>

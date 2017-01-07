@@ -4,6 +4,6 @@ ionicApp
     version: '0.0.1',
     host: window.HOST,
     staticHost: window.STATIC_HOST,
-    language: 'ch'
+    language: 'en'
 })
 ;

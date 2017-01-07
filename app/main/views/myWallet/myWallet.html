@@ -1,0 +1,43 @@
+<ion-view>
+    <ion-nav-title></ion-nav-title>
+    <ion-nav-buttons side="left">
+        <nav-back-button></nav-back-button>
+    </ion-nav-buttons>
+    <ion-content class="padding">
+        <div class="list">
+            <div class="padding text-center">{{language.nowPrice}}：1ETH {{language.tip3}} {{advicedPrice}}RMB</div>
+            <div class="padding-top padding-bottom">{{language.walletAddress}}：
+                <textarea class="form-control" type="text" readonly="readonly">{{wallet.address}}</textarea>
+            </div>
+            <div class="padding-top padding-bottom">{{language.walletBalance}}：{{wallet.balance | weiToETH | number:2}} ETH ({{wallet.balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB) </div>
+            <div class="padding-top padding-bottom">{{language.balance}}：{{balance | weiToETH | number:2}} ETH ({{balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB) </div>
+            <div style="height:30px;">{{language.rechargeRecord}}</div>
+            <ul class="list" ng-repeat="order in orders.docs">
+                <li class="item">
+                    {{language.address}}：<div class="table-list">{{order.address}}</div>
+                </li>
+                <li class="item">
+                    {{language.orderNo}}：<div class="table-list">{{order.out_trade_no}}</div>
+                </li>
+                <li class="item">
+                    {{language.createDate}}：<div class="table-list">{{order.createdAt}}</div>
+                </li>
+                <li class="item">
+                    {{language.amount}}：<div class="table-list">{{order.coin}}ETH ({{order.price}}RMB)</div>
+                </li>
+                <li class="item">
+                    {{language.orderStatus}}：<div class="table-list">{{order.status | orderStatus}}</div>
+                </li>
+            </ul>
+            <div class="button-bar">
+              <a class="button" ng-click="preOrder()">{{language.previous}}</a>
+              <a class="button" ng-click="nextOrder()">{{language.next}}</a>
+            </div>
+            <div style="height:30px;">{{language.recharge}}</div>
+            <label class="item item-input">
+                <input type="number" placeholder="{{language.rechargePlaceholder}}" ng-model="eth">
+            </label>
+            <button class="button button-positive button-block" ng-click="recharge(eth)">{{language.recharge}}</button>
+        </div>
+    </ion-content>
+</ion-view>

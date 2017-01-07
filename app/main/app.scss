@@ -105,3 +105,26 @@ $background-gray:#f5f5f5 !default;
     width: 85%;
     vertical-align: text-top;
 }
+
+.bar.bar-light{
+    background-size: 100% 0px;
+}
+
+textarea{
+    width: 100%;
+    min-height: 40px;
+    border:1px solid #ccc;
+    resize: none;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.item-note{
+    color:#444;
+}
+
+.box-header{
+    border-radius: 5px;
+    color: white !important;
+    font-size: 24px;
+}

@@ -1,5 +1,5 @@
-<ion-view hide-nav-bar="true">
-    <ion-nav-title>产品详情</ion-nav-title>
+<ion-view>
+    <ion-nav-title></ion-nav-title>
     <ion-nav-buttons side="left">
         <nav-back-button></nav-back-button>
     </ion-nav-buttons>
@@ -30,7 +30,7 @@
                 </div>
                 <div class="item-content" style="position: relative;z-index: 999;">
                     <span>{{language.tip1}}
-                        <span class="positive" ui-sref="app.provision">《 {{language.provision}} 》</span>{{language.tip2}}
+                        <span class="positive" ng-click="provision()">《 {{language.provision}} 》</span>{{language.tip2}}
                     </span>
                 </div>
             </div>

@@ -13,15 +13,17 @@ window.MBSProvider = require('./MBSProvider.js');
 window.ionicApp = angular.module('madaoClient', ['ionic', 'ui.router','ngResource'])
 .run(['$rootScope','Wechat','Me','LANGUAGE','APP_CONFIG',function ($rootScope,Wechat,Me,LANGUAGE,APP_CONFIG) {
     $rootScope.language = LANGUAGE[APP_CONFIG.language];
-    // Me.get().$promise.then(function(me){
-    //
-    // },function(err){
-    //     Wechat.loginWechat(function(){
-    //         console.log('登录成功')
-    //     },function(msg){
-    //         console.log(msg)
-    //     });
-    // })
+    if(Wechat.hasAccessToken()){
+        Me.get().$promise.then(function(res){
+
+        },function(err){
+            Wechat.loginWechat(function(){
+                console.log('登录成功')
+            },function(msg){
+                console.log(msg)
+            });
+        })
+    }
 }])
 .config(['$ionicConfigProvider', function($ionicConfigProvider) {
     $ionicConfigProvider.navBar.alignTitle('center');
@@ -44,14 +46,6 @@ function ($stateProvider, $urlRouterProvider, $httpProvider) {
             url: '/app',
             templateUrl: 'templates/app.html',
             abstract: true,
-        })
-        .state('app.start', {
-            url: '/start',
-            views: {
-                menuContent: {
-                    templateUrl: 'templates/start.html'
-                }
-            }
         })
         .state('app.tabs', {
             url: '/tabs',
@@ -115,6 +109,14 @@ function ($stateProvider, $urlRouterProvider, $httpProvider) {
                 }
             }
         })
+        .state('app.provisionEn', {
+            url: '/provisionEn',
+            views: {
+                menuContent: {
+                    templateUrl: 'templates/provisionEn.html'
+                }
+            }
+        })
         .state('app.process', {
             url: '/process',
             views: {
@@ -132,12 +134,12 @@ function ($stateProvider, $urlRouterProvider, $httpProvider) {
                 }
             }
         })
-        .state('app.test', {
-            url: '/test',
+        .state('app.myWallet', {
+            url: '/myWallet',
             views: {
                 menuContent: {
-                    templateUrl: 'templates/test.html',
-                    controller: 'testCtrl'
+                    templateUrl: 'templates/myWallet.html',
+                    controller: 'myWalletCtrl'
                 }
             }
         })

@@ -1,30 +1,47 @@
 <ion-view hide-nav-bar="true">
     <ion-nav-title>理赔</ion-nav-title>
-    <ion-content class="background-gray padding">
+    <ion-content class="padding">
         <ion-refresher pulling-text="{{language.pullDownToRefresh}}" on-refresh="getClaims()">
         </ion-refresher>
-        <ul class="list" ng-repeat="claim in claims" style="margin-bottom:10px;">
-            <li class="item">
-                {{language.name}}：<div class="table-list">{{claim.claimerName}}</div>
-            </li>
-            <li class="item">
-                {{language.nationality}}：<div class="table-list">{{claim.claimerCountry}}</div>
-            </li>
-            <li class="item">
-                {{language.id}}：<div class="table-list">{{claim.claimerId}}</div>
-            </li>
-            <li class="item">
-                {{language.flightNumber}}：<div class="table-list">{{claim.flightNumber}}</div>
-            </li>
-            <li class="item">
-                {{language.departureTime}}：<div class="table-list">{{claim.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}</div>
-            </li>
-            <li class="item">
-                {{language.no}}：<div class="table-list">{{claim.oracleItId}}</div>
-            </li>
-            <li class="item">
-                {{language.applicationStatus}}：<div class="table-list">{{claim.status | claimStatus}}</div>
-            </li>
-        </ul>
+
+        <div class="list" style="margin-bottom:10px;color:#444" ng-repeat="claim in claims">
+            <a class="item text-center box-header" ng-style="claim.status | claimColor">
+               {{claim.status | claimStatus}}
+            </a>
+            <a class="item" style="padding-left:0;padding-right:0;border-bottom: 2px solid #ccc;" ng-style="claim.status | claimBorderColor">
+                <div class="row">
+                    <div class="col">
+                        {{language.flightNumber}}
+                    </div>
+                    <div class="col">
+                        {{language.departureTime}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col" style="font-size: 20px;">{{claim.flightNumber}}</div>
+                    <div class="col" style="font-size: 20px;">{{claim.departureTime*1000 | date:'yyyy/MM/dd HH:mm'}}</div>
+                </div>
+            </a>
+            <a class="item" style="border-top: 0;">
+               {{language.name}}
+               <span class="item-note">
+                   {{claim.claimerName}}
+               </span>
+               <div style="width: 100%;height: 1px;background-color: #ddd;position: relative;bottom: -10px;"></div>
+            </a>
+            <a class="item" style="border-top: 0;">
+                {{language.nationality}}
+                <span class="item-note">
+                    {{claim.claimerCountry}}
+                </span>
+                <div style="width: 100%;height: 1px;background-color: #ddd;position: relative;bottom: -10px;"></div>
+            </a>
+            <a class="item" style="border-top: 0;">
+                {{language.id}}
+                <span class="item-note">
+                    {{claim.claimerId}}
+                </span>
+            </a>
+        </div>
     </ion-content>
 </ion-view>

@@ -3,13 +3,26 @@ ionicApp
 .factory('walletManage', ['$ionicModal','Wallet','Me', 'globalFuncs','Wechat','Coinprice','Coinorders','Ether','web3Provider','Coinorders','Coinordergetpayparams','$ionicLoading','$timeout',
 function($ionicModal,Wallet,Me,globalFuncs,Wechat,Coinprice,Coinorders,Ether,web3Provider,Coinorders,Coinordergetpayparams,$ionicLoading,$timeout){
     return function(scope, callback){
-        callback = callback || noop;
+        vcallback = callback || angular.noop;
         $ionicModal.fromTemplateUrl('templates/walletManage.html',{
             'scope': scope,
             'backdropClickToClose': false
         }).then(function(modal){
-            modal.showModal = function(){
-                modal.show();
+            var customCallback = angular.noop;
+            modal.showModal = function(c){
+                if(c)customCallback = c;
+                scope.me = {};
+                Me.get().$promise.then(function(res){
+                    if(!Wechat.hasAccessToken())Wechat.getAccessToken();
+                    scope.me = res;
+                    modal.show();
+                },function(err){
+                    Wechat.loginWechat(function(){
+                        console.log($scope.$root.language.tipMsg4)
+                    },function(msg){
+                        console.log(msg)
+                    });
+                })
             }
 
             modal.hideModal = function(){
@@ -26,27 +39,6 @@ function($ionicModal,Wallet,Me,globalFuncs,Wechat,Coinprice,Coinorders,Ether,web
 
             callback(modal);
 
-            scope.me = {};
-            Me.get().$promise.then(function(res){
-                if(!Wechat.hasAccessToken())Wechat.getAccessToken();
-                scope.me = res;
-            },function(err){
-                Wechat.loginWechat(function(){
-                    console.log('登录成功')
-                },function(msg){
-                    console.log(msg)
-                });
-            })
-            if(Wechat.hasAccessToken()){
-                $timeout(function(){
-                    Me.get().$promise.then(function(res){
-                        scope.me = res;
-                    },function(err){
-
-                    })
-                },2000)
-            }
-
             scope.password = "";
             scope.wallet = null;
             scope.isDone = true;
@@ -55,7 +47,7 @@ function($ionicModal,Wallet,Me,globalFuncs,Wechat,Coinprice,Coinorders,Ether,web
             scope.blob = scope.blobEnc = "";
             scope.creatWallet = function(password){
                 if(!password||password.length<9){
-                    alert("请输入长度至少为9位的密码")
+                    alert($scope.$root.language.tipMsg9)
                 }else if(scope.isDone){
                     scope.isDone = false;
                     scope.wallet = Wallet.generate(false);
@@ -83,7 +75,7 @@ function($ionicModal,Wallet,Me,globalFuncs,Wechat,Coinprice,Coinorders,Ether,web
                 Coinprice.get().$promise.then(function(res){
                     scope.advicedPrice = res.ethcny;
                 },function(msg){
-                    alert("获取ETH和RMB汇率失败")
+                    // alert($scope.$root.language.errMsg7)
                 });
             }
 
@@ -147,7 +139,7 @@ function($ionicModal,Wallet,Me,globalFuncs,Wechat,Coinprice,Coinorders,Ether,web
                     scope.advicedPrice = res.ethcny;
                 },function(msg){
                     $ionicLoading.hide();
-                    alert("获取ETH和RMB汇率失败")
+                    // alert($scope.$root.language.errMsg7)
                 });
                 scope.addWalletStats = "";
                 try {
@@ -158,18 +150,21 @@ function($ionicModal,Wallet,Me,globalFuncs,Wechat,Coinprice,Coinorders,Ether,web
                     return;
                 }
                 web3Provider.init(scope.walletObj.getAddressString(),scope.walletObj.getPrivateKeyString());
-                window.mdc.balances(scope.walletObj.getAddressString()).then(function(res){
-                    scope.balance = res.toNumber()+"";
-                })
-                Ether.getBalance({'balance':scope.walletObj.getAddressString(),'isClassic':true}).$promise.then(function(res){
-                    scope.wallet = res.data;
-                    scope.showWalletInfo = true;
-                    $ionicLoading.hide();
-                },function(msg){
-                    alert(JSON.stringify(msg));
-                    $ionicLoading.hide();
-                })
-                scope.getOrder();
+                $ionicLoading.hide();
+                customCallback();
+                modal.hideModal();
+                // window.mdc.balances(scope.walletObj.getAddressString()).then(function(res){
+                //     scope.balance = res.toNumber()+"";
+                // })
+                // Ether.getBalance({'balance':scope.walletObj.getAddressString(),'isClassic':true}).$promise.then(function(res){
+                //     scope.wallet = res.data;
+                //     scope.showWalletInfo = true;
+                //     $ionicLoading.hide();
+                // },function(msg){
+                //     alert(JSON.stringify(msg));
+                //     $ionicLoading.hide();
+                // })
+                // scope.getOrder();
             };
 
             scope.recharge = function(joinPrice){
@@ -192,10 +187,10 @@ function($ionicModal,Wallet,Me,globalFuncs,Wechat,Coinprice,Coinorders,Ether,web
                                    'getBrandWCPayRequest', params, function(res){
                                        console.log("onBridgeReadyResult")
                                        if(res.err_msg == "get_brand_wcpay_request:ok" ) {
-                                           alert("支付成功");
+                                           alert($scope.$root.language.tipMsg6);
                                            scope.getOrder()
                                        }else{
-                                           alert("支付失败");
+                                           alert($scope.$root.language.errMsg11);
                                        }
                                    }
                                );
@@ -221,7 +216,7 @@ function($ionicModal,Wallet,Me,globalFuncs,Wechat,Coinprice,Coinorders,Ether,web
                 },function(err){
                     $ionicLoading.hide();
                     Wechat.loginWechat(function(){
-                        console.log('登录成功')
+                        console.log($scope.$root.language.tipMsg4)
                     },function(msg){
                         console.log(msg)
                     });

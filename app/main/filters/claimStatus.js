@@ -1,15 +1,15 @@
 
-ionicApp.filter('claimStatus', [function(){
+ionicApp.filter('claimStatus', ['$rootScope',function($rootScope){
     return function(status){
         var name = "";
         if(status==0){
-            name = "理赔初始化";
+            name = $rootScope.language.claimStatus1;
         }else if(status==6){
-            name = "理赔审核成功";
+            name = $rootScope.language.claimStatus2;
         }else if(status==8){
-            name = "理赔审核失败";
+            name = $rootScope.language.claimStatus3;
         }else{
-            name = "理赔审核中";
+            name = $rootScope.language.claimStatus4;
         }
         return name;
     }

@@ -6,23 +6,21 @@ function ($scope,$state, Wechat,Me,$timeout,$ionicLoading,web3Provider,walletMan
         walletManage($scope, function(modal){
             $scope.modal = modal;
         });
-        Coinprice.get().$promise.then(function(res){
-            $scope.advicedPrice = res.ethcny;
-        },function(msg){
-            console.log(msg)
-            alert("获取ETH和RMB汇率失败")
-        });
         $scope.me = {};
         $timeout(function(){
             Me.get().$promise.then(function(res){
                 if(!Wechat.hasAccessToken())Wechat.getAccessToken();
+                Coinprice.get().$promise.then(function(res){
+                    $scope.advicedPrice = res.ethcny;
+                },function(msg){
+                    console.log(msg)
+                    // alert($scope.$root.language.errMsg7)
+                });
+
                 $scope.me = res;
                 web3Provider.init($scope.me.address,'');
                 if(!$scope.me.encrypted_wallet_key){
                     $scope.modal.showModal();
-                }
-                getData = function(){
-
                 }
                 window.mdc.balances($scope.$root.address).then(function(res){
                     $scope.balance = res.toNumber();
@@ -32,7 +30,7 @@ function ($scope,$state, Wechat,Me,$timeout,$ionicLoading,web3Provider,walletMan
                 });
             },function(err){
                 Wechat.loginWechat(function(){
-                    console.log('登录成功')
+                    console.log($scope.$root.language.tipMsg4)
                 },function(msg){
                     console.log(msg)
                 });
