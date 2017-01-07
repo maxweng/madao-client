@@ -1,10 +1,11 @@
-ionicApp.controller('addFlightCtrl', ['$scope','$state','Ether','web3Provider','Wallet','Wechat','Me','$ionicLoading','tools','walletManage',
-function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,walletManage){
+ionicApp.controller('addFlightCtrl', ['$scope','$state','Ether','web3Provider','Wallet','Wechat','Me','$ionicLoading','tools','walletManage','ethUnits',
+function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,walletManage,ethUnits){
     $scope.$on('$ionicView.beforeEnter', function(){
         Me.get().$promise.then(function(me){
             $scope.me = me;
             if(!window.mdc)web3Provider.init($scope.me.address,'');
             $scope.get();
+            checkBalance();
         },function(err){
             web3Provider.init("","",true);
             $scope.get();
@@ -96,6 +97,15 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,w
         }
     }
 
+    var checkBalance = function(){
+        var mixEth = parseInt(ethUnits.toEther(parseInt(ethUnits.toWei(1,"ether"))+1000000*20000000000,'wei'));
+        Ether.getBalance({'balance':$scope.me.address,'isClassic':true}).$promise.then(function(res){
+            if(parseInt(ethUnits.toEther(res.data.balance,'wei'))<mixEth)$scope.balanceInsufficient = true;
+        },function(msg){
+            alert(JSON.stringify(msg));
+        })
+    }
+
     $scope.add = function(){
         if(decryptWallet())return;
         var dateTime = Math.floor((new Date($scope.data.departureTime).getTime()/1000)/86400)*86400;
@@ -118,8 +128,13 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,w
             }
         }
         $ionicLoading.show();
+        if($scope.balanceInsufficient){
+            alert($scope.$root.language.errMsg17);
+            return;
+        }
         window.mdc.addFlight(userFlight.flight.flightNumber, userFlight.flight.departureTime, { from: userFlight.user.account, gas: 1000000, gasPrice: 20000000000 }).then(function (transactionId) {
             console.log('Add flight transaction ID: ', '' + transactionId);
+            checkBalance();
             Ether.getTransaction({'txId':transactionId,'isClassic':true}).$promise.then(function(res){
                 $ionicLoading.hide();
                 if(!res.data.transactionIndex&&res.data.transactionIndex!=0){
@@ -141,6 +156,10 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,w
 
     $scope.claim = function(id){
         if(decryptWallet())return;
+        if($scope.balanceInsufficient){
+            alert($scope.$root.language.errMsg17);
+            return;
+        }
         $ionicLoading.show()
         window.mdc.infoHashes.call($scope.$root.address).then(function (res) {
             var infoHash = transString(res[0]);
@@ -148,6 +167,7 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,w
             if(available){
                 window.mdc.claim(id, $scope.me.real_name, $scope.me.country, tools.hexEncode($scope.me.id_no), tools.noncestr($scope.$root.address), { from: $scope.$root.address, gas: 1000000, gasPrice: 20000000000 }).then(function (transactionId) {
                     console.log('Claim transaction ID: ', '' + transactionId);
+                    checkBalance();
                     Ether.getTransaction({'txId':transactionId,'isClassic':true}).$promise.then(function(res){
                         $ionicLoading.hide();
                         console.log(res);

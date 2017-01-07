@@ -3,43 +3,46 @@ ionicApp.controller('productDetailCtrl', ['$scope','$state','Coinprice','tools',
 function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
     Coinorders,Coinordergetpayparams,Wechat,$ionicLoading,Wallet,walletManage,APP_CONFIG){
     $scope.$on('$ionicView.beforeEnter', function(){
-        if(!Wechat.hasAccessToken())Wechat.getAccessToken();
-        walletManage($scope, function(modal){
-            $scope.modal = modal;
-            Me.get().$promise.then(function(me){
-                $scope.me = me;
-                if(!$scope.me.encrypted_wallet_key){
-                    $scope.modal.showModal();
-                }else{
-                    if(window.mdc&&$scope.$root.address&&$scope.$root.privateKey){
-
+        if(!Wechat.hasAccessToken()){
+            Wechat.getAccessToken();
+        }else{
+            walletManage($scope, function(modal){
+                $scope.modal = modal;
+                Me.get().$promise.then(function(me){
+                    $scope.me = me;
+                    if(!$scope.me.encrypted_wallet_key){
+                        $scope.modal.showModal();
                     }else{
-                        var wallet;
-                        var str=prompt($scope.$root.language.tip10,"");
-                        if(str){
-                            try {
-                                wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
-                            } catch (e) {
+                        if(window.mdc&&$scope.$root.address&&$scope.$root.privateKey){
+
+                        }else{
+                            var wallet;
+                            var str=prompt($scope.$root.language.tip10,"");
+                            if(str){
+                                try {
+                                    wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
+                                } catch (e) {
+                                    $scope.modal.showModal();
+                                    return
+                                }
+                                web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
+                            }else{
                                 $scope.modal.showModal();
                                 return
                             }
-                            web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
-                        }else{
-                            $scope.modal.showModal();
-                            return
                         }
                     }
-                }
-                Coinprice.get().$promise.then(function(res){
-                    $scope.advicedPrice = res.ethcny;
-                    joinPrice = 1;
-                },function(msg){
-                    // alert($scope.$root.language.errMsg7)
-                });
-            },function(err){
-                $scope.modal.showModal();
-            })
-        });
+                    Coinprice.get().$promise.then(function(res){
+                        $scope.advicedPrice = res.ethcny;
+                        joinPrice = 1;
+                    },function(msg){
+                        // alert($scope.$root.language.errMsg7)
+                    });
+                },function(err){
+                    $scope.modal.showModal();
+                })
+            });
+        }
     });
 
     $scope.provision = function(){
@@ -54,12 +57,13 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
     $scope.data = {};
 
     var bayCoin = function(joinPrice){
+        var buyPrice = joinPrice+0.2;
         if(!Wechat.hasAccessToken()){
             Wechat.getAccessToken();
             return;
         }
         Me.get().$promise.then(function(me){
-            Coinorders.add({},{'coin':joinPrice}).$promise.then(function(data){
+            Coinorders.add({},{'coin':buyPrice}).$promise.then(function(data){
                 console.log(data)
                 Coinordergetpayparams.add({'access_token':WXOauth.oauthData.access_token,'openid':WXOauth.oauthData.openid,'out_trade_no':data.out_trade_no},{}).$promise.then(function(wechatParams){
                     console.log(wechatParams)
@@ -151,6 +155,9 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
             if(error&&(error.message.indexOf("sender doesn't have enough funds to send tx")!=-1||
         error.message.indexOf("Account does not exist or account balance too low")!=-1)){
                 alert($scope.$root.language.errMsg16);
+                bayCoin(joinPrice);
+            }else if(error.message.indexOf("Insufficient funds for gas * price + value")!=-1){
+                alert($scope.$root.language.errMsg17);
                 bayCoin(joinPrice);
             }else{
                 console.log(error)
