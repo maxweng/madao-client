@@ -5,10 +5,10 @@
     </ion-header-bar>
     <div class="tabs-top tabs-color-positive ng-hide" ng-show="!showWallet&&(!me.address||!me.encrypted_wallet_key)">
         <div class="tabs">
-            <a class="tab-item" ng-click="selectTab('createWallet')" ng-class="{'active': modal.curTab === 'createWallet'}">
+            <a class="tab-item" ng-click="selectTab('createWallet')" ng-class="{'active': modalData.curTab === 'createWallet'}">
                 {{ language.createWallet }}
             </a>
-            <a class="tab-item" ng-click="selectTab('importWallet')" ng-class="{'active': modal.curTab === 'importWallet'}">
+            <a class="tab-item" ng-click="selectTab('importWallet')" ng-class="{'active': modalData.curTab === 'importWallet'}">
                 {{ language.importWallet }}
             </a>                        
         </div>
@@ -59,14 +59,14 @@
             <button class="button button-positive button-block" ng-click="recharge(eth)">{{language.recharge}}</button>
         </div>
         <div class="list" ng-show="!showWallet&&(!me.address||!me.encrypted_wallet_key)">
-            <div class="ng-hide" ng-show="modal.curTab === 'createWallet'">
+            <div class="ng-hide" ng-show="modalData.curTab === 'createWallet'">
                 <div class="padding-top padding-bottom">{{language.tip4}}</div>
                 <label class="item item-input">
                     <input type="password" placeholder="{{language.passwordPlaceholder}}" ng-model="password">
                 </label>
                 <button class="button button-positive button-block" ng-click="creatWallet(password)">{{language.createWallet}}</button>
             </div>
-            <div class="ng-hide" ng-show="modal.curTab === 'importWallet'">
+            <div class="ng-hide" ng-show="modalData.curTab === 'importWallet'">
                 <div class="padding-top padding-bottom">{{language.bindWallet}}</div>
                 <label class="item item-input">
                     <input type="text" placeholder="{{language.address}}" ng-model="address">

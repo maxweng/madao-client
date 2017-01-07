@@ -3,13 +3,13 @@ ionicApp
 .factory('walletManage', ['$ionicModal','Wallet','Me', 'globalFuncs','Wechat','Coinprice','Coinorders','Ether','web3Provider','Coinorders','Coinordergetpayparams','$ionicLoading','$timeout',
 function($ionicModal,Wallet,Me,globalFuncs,Wechat,Coinprice,Coinorders,Ether,web3Provider,Coinorders,Coinordergetpayparams,$ionicLoading,$timeout){
     return function(scope, callback){
-        vcallback = callback || angular.noop;
+        callback = callback || angular.noop;
         $ionicModal.fromTemplateUrl('templates/walletManage.html',{
             'scope': scope,
             'backdropClickToClose': false
         }).then(function(modal){
             var customCallback = angular.noop;
-            scope.modal = {
+            scope.modalData = {
                 curTab: 'createWallet'
             };
             modal.showModal = function(c){
@@ -41,7 +41,7 @@ function($ionicModal,Wallet,Me,globalFuncs,Wechat,Coinprice,Coinorders,Ether,web
             };
 
             scope.selectTab = function(tab){
-                scope.modal.curTab = tab;
+                scope.modalData.curTab = tab;
             };
 
             callback(modal);
