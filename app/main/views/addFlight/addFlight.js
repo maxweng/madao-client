@@ -95,13 +95,11 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,w
                         wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
                     } catch (e) {
                         alert(e)
-                        $state.go("app.tabs.me")
                         return true;
                     }
                     web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
                     return false;
                 }else{
-                    $state.go("app.tabs.me")
                     return true;
                 }
             }).then(function(result){

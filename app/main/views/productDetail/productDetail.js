@@ -28,27 +28,23 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
                                     try {
                                         wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
                                     } catch (e) {
-                                        $scope.modal.showModal();
-                                        hasSetWallet = false;
-                                        return;
+                                        alert($scope.$root.language.errMsg18)
+                                        $state.go("app.tabs.product");
                                     }
                                     web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
+                                    Coinprice.get().$promise.then(function(res){
+                                        $scope.advicedPrice = res.ethcny;
+                                        joinPrice = 1;
+                                    },function(msg){
+                                        // alert($scope.$root.language.errMsg7)
+                                    });
                                 }else{
-                                    $scope.modal.showModal();
-                                    hasSetWallet = false;
+                                    $state.go("app.tabs.product");
                                 }
                             })
-                            
+
                         }
                     }
-                    if(hasSetWallet){
-                        Coinprice.get().$promise.then(function(res){
-                            $scope.advicedPrice = res.ethcny;
-                            joinPrice = 1;
-                        },function(msg){
-                            // alert($scope.$root.language.errMsg7)
-                        });
-                    }   
                 },function(err){
                     $scope.modal.showModal();
                 })
@@ -73,7 +69,7 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
             return;
         }
         Me.get().$promise.then(function(me){
-            Coinorders.add({},{'coin':(buyPrice+0.2)}).$promise.then(function(data){
+            Coinorders.add({},{'coin':(joinPrice+0.2)}).$promise.then(function(data){
                 console.log(data)
                 Coinordergetpayparams.add({'access_token':WXOauth.oauthData.access_token,'openid':WXOauth.oauthData.openid,'out_trade_no':data.out_trade_no},{}).$promise.then(function(wechatParams){
                     console.log(wechatParams)
@@ -147,6 +143,18 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
         $scope.data.noncestr = tools.noncestr($scope.$root.address);
         window.mdc.signUp($scope.data.recommender || "", $scope.data.name, $scope.data.country, id, $scope.data.noncestr, { from: $scope.$root.address, value: ethUnits.toWei(joinPrice,"ether"),'gasLimit':1000000,'gasPrice':20000000000}).then(function (transactionId) {
             console.log('Sign up transaction ID: ', '' + transactionId);
+            Me.get().$promise.then(function(res){
+                res.real_name = $scope.data.name;
+                res.country = $scope.data.country;
+                res.id_no = $scope.data.id;
+                Me.update(res).$promise.then(function(res){
+                    $scope.me = res;
+                },function(msg){
+                    alert(JSON.stringify(msg))
+                })
+            },function(err){
+
+            })
             Ether.getTransaction({'txId':transactionId,'isClassic':true}).$promise.then(function(res){
                 $ionicLoading.hide();
                 if(!res.data.transactionIndex&&res.data.transactionIndex!=0){
@@ -166,7 +174,7 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
         error.message.indexOf("Account does not exist or account balance too low")!=-1)){
                 alert($scope.$root.language.errMsg16);
                 bayCoin(joinPrice);
-            }else if(error.message.indexOf("Insufficient funds for gas * price + value")!=-1){
+            }else if(error&&error.message.indexOf("Insufficient funds for gas * price + value")!=-1){
                 alert($scope.$root.language.errMsg17);
                 bayCoin(joinPrice);
             }else{
@@ -174,19 +182,6 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
                 alert($scope.$root.language.errMsg15);
             }
         });
-
-        Me.get().$promise.then(function(res){
-            res.real_name = $scope.data.name;
-            res.country = $scope.data.country;
-            res.id_no = $scope.data.id;
-            Me.update(res).$promise.then(function(res){
-                $scope.me = res;
-            },function(msg){
-                alert(JSON.stringify(msg))
-            })
-        },function(err){
-
-        })
     }
 }])
 ;

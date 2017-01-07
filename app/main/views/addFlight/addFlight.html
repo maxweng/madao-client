@@ -4,13 +4,14 @@
         <ion-refresher pulling-text="{{language.pullDownToRefresh}}" on-refresh="get()">
         </ion-refresher>
         <ul class="list"  style="margin-bottom:10px;" ng-repeat="flight in flights" style="margin-bottom:10px;">
-            <li class="item" style="background: rgba(174,220,247,0.45);padding: 29px 16px;">
+            <li class="item" style="background: rgba(174,220,247,0.45);padding: 29px 16px;font-size:24px;">
                 {{language.flightNumber}} <div class="table-list">{{flight.flightNumber}}</div>
                 <i class="ion ion-plane" style="color: #8CCCF2;font-size: 40px;position: absolute;right: 20px;top: 20px;"></i>
             </li>
             <li class="item" style="padding: 19px 16px;">
-                <div>{{language.arrivesTime}} <span style="padding-left: 124px;">{{language.arrivesTime}}</span></div>
-                <div class="table-list" style="width: 100%;">{{flight.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}<i class="ion ion-plane" style="color: #8CCCF2;font-size: 20px;margin: 0 15px;"></i>{{(flight.departureTime+86400)*1000 | date:'yyyy-MM-dd HH:mm'}}</div>
+                <div style="font-size:12px;">{{language.departureTime}} </div>
+                <div class="table-list" style="width: 100%;font-size:22px;font-weight:bold;">{{flight.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}
+                </div>
             </li>
             <li class="item text-center" ng-show="flight.claimed">
                 {{flight.claimStatus | claimStatus}}
