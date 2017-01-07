@@ -57,13 +57,12 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
     $scope.data = {};
 
     var bayCoin = function(joinPrice){
-        var buyPrice = joinPrice+0.2;
         if(!Wechat.hasAccessToken()){
             Wechat.getAccessToken();
             return;
         }
         Me.get().$promise.then(function(me){
-            Coinorders.add({},{'coin':buyPrice}).$promise.then(function(data){
+            Coinorders.add({},{'coin':(buyPrice+0.2)}).$promise.then(function(data){
                 console.log(data)
                 Coinordergetpayparams.add({'access_token':WXOauth.oauthData.access_token,'openid':WXOauth.oauthData.openid,'out_trade_no':data.out_trade_no},{}).$promise.then(function(wechatParams){
                     console.log(wechatParams)

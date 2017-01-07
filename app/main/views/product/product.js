@@ -85,7 +85,7 @@ function($scope,$state,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice,
             return;
         }
         Me.get().$promise.then(function(me){
-            Coinorders.add({},{'coin':joinPrice}).$promise.then(function(data){
+            Coinorders.add({},{'coin':(joinPrice+0.2)}).$promise.then(function(data){
                 Coinordergetpayparams.add({'access_token':WXOauth.oauthData.access_token,'openid':WXOauth.oauthData.openid,'out_trade_no':data.out_trade_no},{}).$promise.then(function(wechatParams){
                     console.log(wechatParams)
                     var params = {
