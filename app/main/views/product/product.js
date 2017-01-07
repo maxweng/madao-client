@@ -148,7 +148,7 @@ function($scope,$state,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice,
                 inputType: 'password',
                 okText: $scope.$root.language.save,
                 cancelText: $scope.$root.language.cancel
-            }).then(function(srt){
+            }).then(function(str){
                 if(str){
                     try {
                         wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
