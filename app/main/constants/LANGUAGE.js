@@ -2,6 +2,8 @@
 ionicApp
 .constant('LANGUAGE', {
     'en':{
+        'importWallet': 'Import Wallet',
+        'createWallet': 'Create Wallet',
         'fund':'Fund',
         'members':'Members',
         'sr':'Fee',
@@ -98,6 +100,8 @@ ionicApp
         'tipMsg9':'Please enter a password with a minimum of 9 digits'
     },
     'ch':{
+        'importWallet': '导入钱包',
+        'createWallet': '创建钱包',
         'fund':'总金额',
         'members':'参与人数',
         'sr':'会费',

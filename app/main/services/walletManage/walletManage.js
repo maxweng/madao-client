@@ -9,6 +9,9 @@ function($ionicModal,Wallet,Me,globalFuncs,Wechat,Coinprice,Coinorders,Ether,web
             'backdropClickToClose': false
         }).then(function(modal){
             var customCallback = angular.noop;
+            scope.modal = {
+                curTab: 'createWallet'
+            };
             modal.showModal = function(c){
                 if(c)customCallback = c;
                 scope.me = {};
@@ -35,6 +38,10 @@ function($ionicModal,Wallet,Me,globalFuncs,Wechat,Coinprice,Coinorders,Ether,web
 
             scope.close = function(){
                 modal.hideModal();
+            };
+
+            scope.selectTab = function(tab){
+                scope.modal.curTab = tab;
             };
 
             callback(modal);
