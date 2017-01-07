@@ -3,7 +3,17 @@
       <button class="button button-dark button-clear" ng-click="refresh(password)" ng-show="me.address&&me.encrypted_wallet_key&&showWalletInfo">{{language.refresh}}</button>
       <button class="button button-dark button-clear pull-right" ng-click="close()">{{language.close}}</button>
     </ion-header-bar>
-    <ion-content class="padding">
+    <div class="tabs-top tabs-color-positive ng-hide" ng-show="!showWallet&&(!me.address||!me.encrypted_wallet_key)">
+        <div class="tabs">
+            <a class="tab-item" ng-click="selectTab('createWallet')" ng-class="{'active': modal.curTab === 'createWallet'}">
+                {{ language.createWallet }}
+            </a>
+            <a class="tab-item" ng-click="selectTab('importWallet')" ng-class="{'active': modal.curTab === 'importWallet'}">
+                {{ language.importWallet }}
+            </a>                        
+        </div>
+    </div>
+    <ion-content class="padding" ng-class="{'has-tabs-top': !showWallet&&(!me.address||!me.encrypted_wallet_key)}">
         <div class="list" ng-show="me.address&&me.encrypted_wallet_key&&!showWalletInfo">
             <div class="padding-top padding-bottom">{{language.walletAddress}}：
                 <textarea class="form-control" type="text" readonly="readonly">{{me.address}}</textarea>
@@ -49,22 +59,26 @@
             <button class="button button-positive button-block" ng-click="recharge(eth)">{{language.recharge}}</button>
         </div>
         <div class="list" ng-show="!showWallet&&(!me.address||!me.encrypted_wallet_key)">
-            <div class="padding-top padding-bottom">{{language.tip4}}</div>
-            <label class="item item-input">
-                <input type="password" placeholder="{{language.passwordPlaceholder}}" ng-model="password">
-            </label>
-            <button class="button button-positive button-block" ng-click="creatWallet(password)">{{language.createWallet}}</button>
-            <div class="padding-top padding-bottom">{{language.bindWallet}}</div>
-            <label class="item item-input">
-                <input type="text" placeholder="{{language.address}}" ng-model="address">
-            </label>
-            <label class="item item-input">
-                <input type="text" placeholder="{{language.privatekey}}" ng-model="key">
-            </label>
-            <label class="item item-input">
-                <input type="password" placeholder="{{language.passwordPlaceholder}}" ng-model="twypassword">
-            </label>
-            <button class="button button-positive button-block" ng-click="bindExistWallet(address,key,twypassword)">{{language.bindWallet}}</button>
+            <div class="ng-hide" ng-show="modal.curTab === 'createWallet'">
+                <div class="padding-top padding-bottom">{{language.tip4}}</div>
+                <label class="item item-input">
+                    <input type="password" placeholder="{{language.passwordPlaceholder}}" ng-model="password">
+                </label>
+                <button class="button button-positive button-block" ng-click="creatWallet(password)">{{language.createWallet}}</button>
+            </div>
+            <div class="ng-hide" ng-show="modal.curTab === 'importWallet'">
+                <div class="padding-top padding-bottom">{{language.bindWallet}}</div>
+                <label class="item item-input">
+                    <input type="text" placeholder="{{language.address}}" ng-model="address">
+                </label>
+                <label class="item item-input">
+                    <input type="text" placeholder="{{language.privatekey}}" ng-model="key">
+                </label>
+                <label class="item item-input">
+                    <input type="password" placeholder="{{language.passwordPlaceholder}}" ng-model="twypassword">
+                </label>
+                <button class="button button-positive button-block" ng-click="bindExistWallet(address,key,twypassword)">{{language.bindWallet}}</button>
+            </div>
         </div>
         <div class="list" ng-show="showWallet&&(!me.address||!me.encrypted_wallet_key)">
             <h2 class="title">{{language.tip5}}</h2>
