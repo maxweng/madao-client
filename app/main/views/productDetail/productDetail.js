@@ -6,6 +6,12 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
         if(!Wechat.hasAccessToken()){
             Wechat.getAccessToken();
         }else{
+            Coinprice.get().$promise.then(function(res){
+                $scope.advicedPrice = res.ethcny;
+                joinPrice = 1;
+            },function(msg){
+                // alert($scope.$root.language.errMsg7)
+            });
             walletManage($scope, function(modal){
                 $scope.modal = modal;
                 Me.get().$promise.then(function(me){
@@ -32,12 +38,6 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
                                         $state.go("app.tabs.product");
                                     }
                                     web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
-                                    Coinprice.get().$promise.then(function(res){
-                                        $scope.advicedPrice = res.ethcny;
-                                        joinPrice = 1;
-                                    },function(msg){
-                                        // alert($scope.$root.language.errMsg7)
-                                    });
                                 }else{
                                     $state.go("app.tabs.product");
                                 }
@@ -69,7 +69,7 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
             return;
         }
         Me.get().$promise.then(function(me){
-            Coinorders.add({},{'coin':(joinPrice+0.2)}).$promise.then(function(data){
+            Coinorders.add({},{'coin':(joinPrice+0.1)}).$promise.then(function(data){
                 console.log(data)
                 Coinordergetpayparams.add({'access_token':WXOauth.oauthData.access_token,'openid':WXOauth.oauthData.openid,'out_trade_no':data.out_trade_no},{}).$promise.then(function(wechatParams){
                     console.log(wechatParams)
@@ -89,7 +89,6 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
                                console.log("onBridgeReadyResult")
                                if(res.err_msg == "get_brand_wcpay_request:ok" ) {
                                    alert($scope.$root.language.tipMsg6);
-                                   $scope.join();
                                }else{
                                    alert($scope.$root.language.errMsg11);
                                }
@@ -118,6 +117,17 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
             },function(msg){
                 console.log(msg)
             });
+        })
+    }
+
+    var isPay = function(){
+        $ionicPopup.confirm({
+            title: $scope.$root.language.tip12,
+            template: $scope.$root.language.tip11,
+        }).then(function(str){
+            if(str){
+                bayCoin(joinPrice);
+            }
         })
     }
 
@@ -159,10 +169,8 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
                 $ionicLoading.hide();
                 if(!res.data.transactionIndex&&res.data.transactionIndex!=0){
                     alert($scope.$root.language.tipMsg1)
-                    $state.go('app.tabs.product');
                 }else{
                     alert($scope.$root.language.tipMsg8)
-                    $state.go('app.tabs.product');
                 }
             },function(err){
                 $ionicLoading.hide();
@@ -172,11 +180,13 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
             $ionicLoading.hide();
             if(error&&(error.message.indexOf("sender doesn't have enough funds to send tx")!=-1||
         error.message.indexOf("Account does not exist or account balance too low")!=-1)){
-                alert($scope.$root.language.errMsg16);
-                bayCoin(joinPrice);
+                // alert($scope.$root.language.errMsg16);
+                // bayCoin(joinPrice);
+                isPay();
             }else if(error&&error.message.indexOf("Insufficient funds for gas * price + value")!=-1){
-                alert($scope.$root.language.errMsg17);
-                bayCoin(joinPrice);
+                // alert($scope.$root.language.errMsg17);
+                // bayCoin(joinPrice);
+                isPay();
             }else{
                 console.log(error)
                 alert($scope.$root.language.errMsg15);

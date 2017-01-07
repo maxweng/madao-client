@@ -85,7 +85,7 @@ function($scope,$state,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice,
             return;
         }
         Me.get().$promise.then(function(me){
-            Coinorders.add({},{'coin':(joinPrice+0.2)}).$promise.then(function(data){
+            Coinorders.add({},{'coin':(joinPrice+0.1)}).$promise.then(function(data){
                 Coinordergetpayparams.add({'access_token':WXOauth.oauthData.access_token,'openid':WXOauth.oauthData.openid,'out_trade_no':data.out_trade_no},{}).$promise.then(function(wechatParams){
                     console.log(wechatParams)
                     var params = {
@@ -167,7 +167,7 @@ function($scope,$state,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice,
                 deferred.resolve(result);
             });
         }
-        
+
         return deferred.promise;
     }
     $scope.renewals = function(){
@@ -219,6 +219,9 @@ function($scope,$state,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice,
                         if(error&&(error.message.indexOf("sender doesn't have enough funds to send tx")!=-1||
                     error.message.indexOf("Account does not exist or account balance too low")!=-1)){
                             alert($scope.$root.language.errMsg16);
+                            bayCoin(joinPrice);
+                        }else if(error&&error.message.indexOf("Insufficient funds for gas * price + value")!=-1){
+                            alert($scope.$root.language.errMsg17);
                             bayCoin(joinPrice);
                         }else{
                             console.log(error)

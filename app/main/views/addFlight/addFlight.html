@@ -3,9 +3,18 @@
     <ion-content class="padding">
         <ion-refresher pulling-text="{{language.pullDownToRefresh}}" on-refresh="get()">
         </ion-refresher>
-        <ul class="list"  style="margin-bottom:10px;" ng-repeat="flight in flights" style="margin-bottom:10px;">
+        <label class="item item-input" style="background: rgba(174,220,247,0.45);">
+            <span class="input-label">{{language.flightNumber}}</span>
+            <input type="text" class="text-right" placeholder="{{language.defaultPlaceholder}}" ng-model="data.flightNumber">
+        </label>
+        <label class="item item-input">
+            <span class="input-label">{{language.departureTime}}</span>
+            <input type="datetime-local" class="text-right" ng-model="data.departureTime">
+        </label>
+        <button class="button button-positive button-block" ng-click="add()">{{language.addFlight}}</button>
+        <ul class="list" style="margin-top:10px;margin-bottom:10px;" ng-repeat="flight in flights">
             <li class="item" style="background: rgba(174,220,247,0.45);padding: 29px 16px;font-size:24px;">
-                {{language.flightNumber}} <div class="table-list">{{flight.flightNumber}}</div>
+                {{language.flightNumber}} <div class="table-list" style="line-height:28px;">{{flight.flightNumber}}</div>
                 <i class="ion ion-plane" style="color: #8CCCF2;font-size: 40px;position: absolute;right: 20px;top: 20px;"></i>
             </li>
             <li class="item" style="padding: 19px 16px;">
@@ -20,14 +29,5 @@
                 <button class="button button-positive" style="padding: 0 50px;" ng-click="claim(flight._id)">{{language.applicationClaims}}</button>
             </li>
         </ul>
-        <label class="item item-input" style="background: rgba(174,220,247,0.45);">
-            <span class="input-label">{{language.flightNumber}}</span>
-            <input type="text" class="text-right" placeholder="{{language.defaultPlaceholder}}" ng-model="data.flightNumber">
-        </label>
-        <label class="item item-input">
-            <span class="input-label">{{language.departureTime}}</span>
-            <input type="datetime-local" class="text-right" ng-model="data.departureTime">
-        </label>
-        <button class="button button-positive button-block" ng-click="add()">{{language.addFlight}}</button>
     </ion-content>
 </ion-view>

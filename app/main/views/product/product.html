@@ -17,7 +17,7 @@
             <div class="row columns border-bottom">
                 <div class="col-50 border-right column">
                     <div class="box">
-                        <div class="text">{{totalBalance | weiToRMB:advicedPrice | currency:2}}</div>
+                        <div class="text">{{totalBalance | weiToRMB:advicedPrice | currency:'':2}}</div>
                         <div class="title">{{language.fund}}</div>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
     </ion-content>
     <ion-footer-bar class="mbs-footer">
         <!-- <div class="text-color-stable">同意 <span class="positive" ui-sref="app.provision"> 《 保障条款 》 </span></div> -->
-        <span style="font-size: 20px;line-height: 40px;padding-left: 18px;">{{language.sr}} {{advicedPrice*1.2 | number:2 }}</span>
+        <span style="font-size: 20px;line-height: 40px;padding-left: 18px;">{{language.sr}} {{advicedPrice*1.1 | number:2 }}</span>
         <button class="button button-positive pull-right" ui-sref="app.productDetail" ng-if="!showRenewals">
             {{language.join}}
         </button>
