@@ -1,7 +1,10 @@
-ionicApp.controller('addFlightCtrl', ['$scope','$state','Ether','web3Provider','Wallet','Wechat','Me','$ionicLoading','tools','walletManage','ethUnits','$ionicPopup','$q',
-function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,walletManage,ethUnits,$ionicPopup,$q){
+ionicApp.controller('addFlightCtrl', ['$scope','$state','Ether','web3Provider','Wallet','Wechat','Me','$ionicLoading','tools','walletManage','ethUnits','$ionicPopup','$q','walletManage',
+function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,walletManage,ethUnits,$ionicPopup,$q,walletManage){
     $scope.$on('$ionicView.beforeEnter', function(){
         Me.get().$promise.then(function(me){
+            walletManage($scope, function(modal){
+                $scope.modal = modal;
+            });
             $scope.me = me;
             if(!window.mdc)web3Provider.init($scope.me.address,'');
             $scope.get();
@@ -75,7 +78,7 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,w
     var decryptWallet = function(){
         var deferred = $q.defer();
         if(!$scope.me||!$scope.me.encrypted_wallet_key){
-            $scope.modal.showModal();
+            if($scope.modal)$scope.modal.showModal();
             deferred.resolve(true);
         }else if(window.mdc&&$scope.$root.address&&$scope.$root.privateKey){
             deferred.resolve(false);
@@ -105,7 +108,7 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,w
                 deferred.resolve(result);
             });
         }
-        
+
         // var str=prompt($scope.$root.language.tip10,"");
         return deferred.promise;
     };
