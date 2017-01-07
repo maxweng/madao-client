@@ -1,7 +1,7 @@
 ionicApp.controller('productDetailCtrl', ['$scope','$state','Coinprice','tools','Me','Ether','web3Provider','ethFuncs',
-'ethUnits','Coinorders','Coinordergetpayparams','Wechat','$ionicLoading','Wallet','walletManage','APP_CONFIG',
+'ethUnits','Coinorders','Coinordergetpayparams','Wechat','$ionicLoading','Wallet','walletManage','APP_CONFIG','$ionicPopup',
 function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
-    Coinorders,Coinordergetpayparams,Wechat,$ionicLoading,Wallet,walletManage,APP_CONFIG){
+    Coinorders,Coinordergetpayparams,Wechat,$ionicLoading,Wallet,walletManage,APP_CONFIG,$ionicPopup){
     $scope.$on('$ionicView.beforeEnter', function(){
         if(!Wechat.hasAccessToken()){
             Wechat.getAccessToken();
@@ -13,31 +13,42 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
                     if(!$scope.me.encrypted_wallet_key){
                         $scope.modal.showModal();
                     }else{
+                        var hasSetWallet = true;
                         if(window.mdc&&$scope.$root.address&&$scope.$root.privateKey){
 
                         }else{
                             var wallet;
-                            var str=prompt($scope.$root.language.tip10,"");
-                            if(str){
-                                try {
-                                    wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
-                                } catch (e) {
+                            $ionicPopup.prompt({
+                                title: $scope.$root.language.tip10,
+                                inputType: 'password',
+                                okText: $scope.$root.language.save,
+                                cancelText: $scope.$root.language.cancel
+                            }).then(function(srt){
+                                if(str){
+                                    try {
+                                        wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
+                                    } catch (e) {
+                                        $scope.modal.showModal();
+                                        hasSetWallet = false;
+                                        return;
+                                    }
+                                    web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
+                                }else{
                                     $scope.modal.showModal();
-                                    return
+                                    hasSetWallet = false;
                                 }
-                                web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
-                            }else{
-                                $scope.modal.showModal();
-                                return
-                            }
+                            })
+                            
                         }
                     }
-                    Coinprice.get().$promise.then(function(res){
-                        $scope.advicedPrice = res.ethcny;
-                        joinPrice = 1;
-                    },function(msg){
-                        // alert($scope.$root.language.errMsg7)
-                    });
+                    if(hasSetWallet){
+                        Coinprice.get().$promise.then(function(res){
+                            $scope.advicedPrice = res.ethcny;
+                            joinPrice = 1;
+                        },function(msg){
+                            // alert($scope.$root.language.errMsg7)
+                        });
+                    }   
                 },function(err){
                     $scope.modal.showModal();
                 })

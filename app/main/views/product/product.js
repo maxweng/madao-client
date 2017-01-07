@@ -1,7 +1,7 @@
 ionicApp.controller('productCtrl', ['$scope','$state','Ether','ethFuncs','ethUnits',
-'Wechat','Me','web3Provider','Coinprice','Wallet','tools','Coinorders','Coinordergetpayparams','$ionicLoading','walletManage',
+'Wechat','Me','web3Provider','Coinprice','Wallet','tools','Coinorders','Coinordergetpayparams','$ionicLoading','walletManage','$ionicPopup','$q',
 function($scope,$state,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice,
-    Wallet,tools,Coinorders,Coinordergetpayparams,$ionicLoading,walletManage){
+    Wallet,tools,Coinorders,Coinordergetpayparams,$ionicLoading,walletManage,$ionicPopup,$q){
     $scope.$on('$ionicView.beforeEnter', function(){
         walletManage($scope, function(modal){
             $scope.modal = modal;
@@ -135,92 +135,106 @@ function($scope,$state,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice,
     }
     $scope.data = {};
     var decryptWallet = function(){
+        var deferred = $q.defer();
         if(!$scope.me||!$scope.me.encrypted_wallet_key){
             $scope.modal.showModal();
-            return true;
+            deferred.resolve(true);
+        }else if(window.mdc&&$scope.$root.address&&$scope.$root.privateKey){
+            deferred.resolve(false);
+        }else {
+            var wallet;
+            $ionicPopup.prompt({
+                title: $scope.$root.language.tip10,
+                inputType: 'password',
+                okText: $scope.$root.language.save,
+                cancelText: $scope.$root.language.cancel
+            }).then(function(srt){
+                if(str){
+                    try {
+                        wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
+                    } catch (e) {
+                        alert(e)
+                        $scope.modal.showModal();
+                        return true;
+                    }
+                    web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
+                    return false;
+                }else{
+                    $scope.modal.showModal();
+                    return true;
+                }
+            }).then(function(result){
+                deferred.resolve(result);
+            });
         }
-        if(window.mdc&&$scope.$root.address&&$scope.$root.privateKey){
-            return false;
-        }
-        var wallet;
-        var str=prompt($scope.$root.language.tip10,"");
-        if(str){
-            try {
-                wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, str);
-            } catch (e) {
-                alert(e)
-                $scope.modal.showModal();
-                return
-            }
-            web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
-            return false;
-        }else{
-            $scope.modal.showModal();
-            return true;
-        }
+        
+        return deferred.promise;
     }
     $scope.renewals = function(){
-        if(decryptWallet())true;
-        if(joinPrice<0){
-            alert($scope.$root.language.errMsg7);
-            return;
-        }
-        Me.get().$promise.then(function(res){
-            $scope.me = res;
-            $scope.data.name = $scope.me.real_name;
-            $scope.data.country = $scope.me.country;
-            $scope.data.id = $scope.me.id_no;
-            if(!$scope.data.name){
-                alert($scope.$root.language.errMsg12);
-                return;
-            }
-            if(!$scope.data.country){
-                alert($scope.$root.language.errMsg13);
-                return;
-            }
-            if(!$scope.data.id){
-                alert($scope.$root.language.errMsg14);
-                return;
-            }
-            $ionicLoading.show();
-            var id = tools.hexEncode($scope.data.id);
-            $scope.data.noncestr = tools.noncestr($scope.$root.address);
-            window.mdc.signUp($scope.data.recommender || "", $scope.data.name, $scope.data.country, id, $scope.data.noncestr, { from: $scope.$root.address, value: ethUnits.toWei(joinPrice,"ether"),'gasLimit':1000000,'gasPrice':20000000000}).then(function (transactionId) {
-                console.log('Sign up transaction ID: ', '' + transactionId);
-                Ether.getTransaction({'txId':transactionId,'isClassic':true}).$promise.then(function(res){
-                    $ionicLoading.hide();
-                    if(!res.data.transactionIndex&&res.data.transactionIndex!=0){
-                        alert($scope.$root.language.tipMsg1)
-                    }else{
-                        alert($scope.$root.language.tipMsg7)
-                    }
-                    window.mdc.balances($scope.$root.address).then(function(res){
-                        $scope.balance = res.toNumber();
-                        $scope.$apply();
-                    })
-                },function(err){
-                    $ionicLoading.hide();
-                    alert(err.message);
-                });
-            }).catch(function(error){
-                $ionicLoading.hide();
-                if(error&&(error.message.indexOf("sender doesn't have enough funds to send tx")!=-1||
-            error.message.indexOf("Account does not exist or account balance too low")!=-1)){
-                    alert($scope.$root.language.errMsg16);
-                    bayCoin(joinPrice);
-                }else{
-                    console.log(error)
-                    alert($scope.$root.language.errMsg15);
+        decryptWallet().then(function(result){
+            if(!result){
+                if(joinPrice<0){
+                    alert($scope.$root.language.errMsg7);
+                    return;
                 }
-            });
-        },function(err){
-            Wechat.loginWechat(function(){
-                console.log($scope.$root.language.tipMsg4)
-            },function(msg){
-                console.log(msg)
-            });
-        })
-    }
+                Me.get().$promise.then(function(res){
+                    $scope.me = res;
+                    $scope.data.name = $scope.me.real_name;
+                    $scope.data.country = $scope.me.country;
+                    $scope.data.id = $scope.me.id_no;
+                    if(!$scope.data.name){
+                        alert($scope.$root.language.errMsg12);
+                        return;
+                    }
+                    if(!$scope.data.country){
+                        alert($scope.$root.language.errMsg13);
+                        return;
+                    }
+                    if(!$scope.data.id){
+                        alert($scope.$root.language.errMsg14);
+                        return;
+                    }
+                    $ionicLoading.show();
+                    var id = tools.hexEncode($scope.data.id);
+                    $scope.data.noncestr = tools.noncestr($scope.$root.address);
+                    window.mdc.signUp($scope.data.recommender || "", $scope.data.name, $scope.data.country, id, $scope.data.noncestr, { from: $scope.$root.address, value: ethUnits.toWei(joinPrice,"ether"),'gasLimit':1000000,'gasPrice':20000000000}).then(function (transactionId) {
+                        console.log('Sign up transaction ID: ', '' + transactionId);
+                        Ether.getTransaction({'txId':transactionId,'isClassic':true}).$promise.then(function(res){
+                            $ionicLoading.hide();
+                            if(!res.data.transactionIndex&&res.data.transactionIndex!=0){
+                                alert($scope.$root.language.tipMsg1)
+                            }else{
+                                alert($scope.$root.language.tipMsg7)
+                            }
+                            window.mdc.balances($scope.$root.address).then(function(res){
+                                $scope.balance = res.toNumber();
+                                $scope.$apply();
+                            })
+                        },function(err){
+                            $ionicLoading.hide();
+                            alert(err.message);
+                        });
+                    }).catch(function(error){
+                        $ionicLoading.hide();
+                        if(error&&(error.message.indexOf("sender doesn't have enough funds to send tx")!=-1||
+                    error.message.indexOf("Account does not exist or account balance too low")!=-1)){
+                            alert($scope.$root.language.errMsg16);
+                            bayCoin(joinPrice);
+                        }else{
+                            console.log(error)
+                            alert($scope.$root.language.errMsg15);
+                        }
+                    });
+                },function(err){
+                    Wechat.loginWechat(function(){
+                        console.log($scope.$root.language.tipMsg4)
+                    },function(msg){
+                        console.log(msg)
+                    });
+                });
+            }
+        });
+    };
 
     // var getData = function(){
     //     var rawTx = {

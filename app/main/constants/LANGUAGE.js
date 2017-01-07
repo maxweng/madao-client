@@ -4,6 +4,8 @@ ionicApp
     'en':{
         'importWallet': 'Import Wallet',
         'createWallet': 'Create Wallet',
+        'save': 'Save',
+        'cancel': 'Cancel',
         'fund':'Fund',
         'members':'Members',
         'sr':'Fee',
@@ -102,6 +104,8 @@ ionicApp
     'ch':{
         'importWallet': '导入钱包',
         'createWallet': '创建钱包',
+        'save': '保存',
+        'cancel': '取消',
         'fund':'总金额',
         'members':'参与人数',
         'sr':'会费',
