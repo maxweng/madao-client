@@ -98,7 +98,7 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,w
     }
 
     var checkBalance = function(){
-        var mixEth = parseInt(ethUnits.toEther(parseInt(ethUnits.toWei(1,"ether"))+1000000*20000000000,'wei'));
+        var mixEth = parseInt(ethUnits.toEther(1000000*20000000000,'wei'));
         Ether.getBalance({'balance':$scope.me.address,'isClassic':true}).$promise.then(function(res){
             if(parseInt(ethUnits.toEther(res.data.balance,'wei'))<mixEth)$scope.balanceInsufficient = true;
         },function(msg){

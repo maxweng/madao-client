@@ -128,3 +128,8 @@ textarea{
     color: white !important;
     font-size: 24px;
 }
+
+.tab-item.activated, .tab-item.active, .tab-item.tab-item-active {
+    opacity: 1;
+    color: #387ef5;
+}

@@ -1,18 +1,18 @@
 .product{
     .title{
-        font-size: $font-size-medium;
+        font-size: $font-size-medium+4;
     }
 
     .text{
         color:$font-gray-stable;
         white-space: normal;
-        line-height: 26px;
+        line-height: 18px;
+        font-size: 12px;
     }
 
     ul{
         line-height: 22px;
         margin: 10px 0;
-        list-style-type: disc;
     }
 
     .columns{
@@ -37,10 +37,12 @@
             .title{
                 font-size: $font-size-base;
                 color:$font-gray-stable;
+                font-size: 14px;
+                padding-top: 10px;
             }
 
             .text{
-                font-size: $font-size-medium;
+                font-size: $font-size-medium+4;
                 color:black;
             }
         }
